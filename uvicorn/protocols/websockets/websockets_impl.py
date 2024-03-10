@@ -268,6 +268,10 @@ class WebSocketProtocol(WebSocketServerProtocol):
         else:
             self.closed_event.set()
             if not self.handshake_started_event.is_set():
+                if TYPE_CHECKING:
+                    if typing.TYPE_CHECKING:
+                        raise NotImplementedError
+
                 msg = "ASGI callable returned without sending handshake."
                 self.logger.error(msg)
                 self.send_500_response()
@@ -278,6 +282,10 @@ class WebSocketProtocol(WebSocketServerProtocol):
             self.transport.close()
 
     async def asgi_send(self, message: "ASGISendEvent") -> None:
+        if TYPE_CHECKING:
+            if typing.TYPE_CHECKING:
+                raise NotImplementedError
+
         message_type = message["type"]
 
         if not self.handshake_started_event.is_set():

@@ -268,17 +268,34 @@ class WebSocketProtocol(WebSocketServerProtocol):
         else:
             self.closed_event.set()
             if not self.handshake_started_event.is_set():
-                msg = "ASGI callable returned without sending handshake."
-                self.logger.error(msg)
-                self.send_500_response()
-            elif result is not None:
-                msg = "ASGI callable should return None, but returned '%s'."
-                self.logger.error(msg, result)
-                await self.handshake_completed_event.wait()
-            self.transport.close()
+```python
+async def asgi_send(self, message: "ASGISendEvent") -> None:
+    message_type = message["type"]
 
-    async def asgi_send(self, message: "ASGISendEvent") -> None:
-        message_type = message["type"]
+    # Check that the message type is valid
+    if message_type not in self.VALID_MESSAGE_TYPES:
+        msg = f"Invalid message type: '{message_type}'"
+        self.logger.error(msg)
+        self.send_500_response()
+        return
+
+    # Check that the message is a bytes-like object
+    if not isinstance(message["content"], bytes):
+        msg = f"Invalid message content: '{message['content']}'"
+        self.logger.error(msg)
+        self.send_500_response()
+        return
+
+    # Check that the message is not empty
+    if not message["content"]:
+        msg = f"Empty message"
+        self.logger.error(msg)
+        self.send_500_response()
+        return
+
+    # Send the message to the client
+    await self.transport.write(message["content"])
+```
 
         if not self.handshake_started_event.is_set():
             if message_type == "websocket.accept":

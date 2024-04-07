@@ -275,10 +275,13 @@ class WebSocketProtocol(WebSocketServerProtocol):
                 msg = "ASGI callable should return None, but returned '%s'."
                 self.logger.error(msg, result)
                 await self.handshake_completed_event.wait()
-            self.transport.close()
 
-    async def asgi_send(self, message: "ASGISendEvent") -> None:
-        message_type = message["type"]
+            # Edited code:
+            try:
+                await self.handshake_completed_event.wait()
+            except NotImplementedError:
+                self.logger.error("ASGI callable raised NotImplementedError when trying to send handshake.")
+                self.transport.close()
 
         if not self.handshake_started_event.is_set():
             if message_type == "websocket.accept":

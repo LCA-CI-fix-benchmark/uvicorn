@@ -268,17 +268,24 @@ class WebSocketProtocol(WebSocketServerProtocol):
         else:
             self.closed_event.set()
             if not self.handshake_started_event.is_set():
-                msg = "ASGI callable returned without sending handshake."
-                self.logger.error(msg)
-                self.send_500_response()
-            elif result is not None:
-                msg = "ASGI callable should return None, but returned '%s'."
-                self.logger.error(msg, result)
-                await self.handshake_completed_event.wait()
-            self.transport.close()
-
     async def asgi_send(self, message: "ASGISendEvent") -> None:
         message_type = message["type"]
+        if message_type == "http.response.start":
+            if not self.start_sent:
+                self.start_sent = True
+                await self.send_start(message["status"])
+        elif message_type == "http.response.body":
+            if self.start_sent:
+                await self.send_body(message["body"])
+            else:
+                self.logger.warning("ASGI callable returned 'http.response.body' before 'http.response.start'.")
+        elif message_type == "http.disconnect":
+            if self.start_sent:
+                await self.send_body(b"", more_body=False)
+            else:
+                self.logger.warning("ASGI callable returned 'http.disconnect' before 'http.response.start'.")
+        else:
+            self.logger.warning(f"Invalid message type {message_type} in ASGI callable.")
 
         if not self.handshake_started_event.is_set():
             if message_type == "websocket.accept":

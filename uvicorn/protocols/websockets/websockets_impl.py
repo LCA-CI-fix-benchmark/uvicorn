@@ -268,17 +268,25 @@ class WebSocketProtocol(WebSocketServerProtocol):
         else:
             self.closed_event.set()
             if not self.handshake_started_event.is_set():
-                msg = "ASGI callable returned without sending handshake."
-                self.logger.error(msg)
-                self.send_500_response()
-            elif result is not None:
-                msg = "ASGI callable should return None, but returned '%s'."
-                self.logger.error(msg, result)
-                await self.handshake_completed_event.wait()
-            self.transport.close()
+                if TYPE_CHECKING:
+                    if not isinstance(message, ASGISendEvent):
+                        msg = "Expected ASGISendEvent, got type '%s'."
+                        self.logger.error(msg, type(message))
+                        await self.handshake_completed_event.wait()
+                        self.transport.close()
+                        return
 
-    async def asgi_send(self, message: "ASGISendEvent") -> None:
-        message_type = message["type"]
+                msg = "ASGI callable returned without sending handshake."
+                if self.handshake_completed.is_set():
+                    self.logger.error(msg)
+                    await self.send_500_response()
+                elif result is not None:
+                    msg = "ASGI callable should return None, but returned '%s'."
+                    self.logger.error(msg, result)
+                    await self.handshake_completed_event.wait()
+                self.send(message.body)
+                self.transport.close()
+
 
         if not self.handshake_started_event.is_set():
             if message_type == "websocket.accept":

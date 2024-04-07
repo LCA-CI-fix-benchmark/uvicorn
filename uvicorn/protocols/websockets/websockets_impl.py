@@ -274,7 +274,9 @@ class WebSocketProtocol(WebSocketServerProtocol):
             elif result is not None:
                 msg = "ASGI callable should return None, but returned '%s'."
                 self.logger.error(msg, result)
-                await self.handshake_completed_event.wait()
+                self.transport.close()
+                raise NotImplementedError("ASGI callable returned an unexpected value.")  # pragma: nocover
+            await self.handshake_completed_event.wait()
             self.transport.close()
 
     async def asgi_send(self, message: "ASGISendEvent") -> None:

@@ -3,7 +3,17 @@
 Thank you for being interested in contributing to Uvicorn.
 There are many ways you can contribute to the project:
 
-- Using Uvicorn on your stack and [reporting bugs/issues you find](https://github.com/encode/uvicorn/issues/new)
+- Using This job failing means the unit tests failed or not all code paths are covered by unit tests.
+
+If tests are failing you will see this message under the coverage report:
+
+`=== 1 failed, 354 passed, 1 skipped, 1 xfailed in 37.08s ===`
+
+If tests succeed but coverage doesn't reach our current threshold, you will see this message under the coverage report:
+
+`Coverage failure: total of 88 is less than fail-under=95`
+
+## Releasingur stack and [reporting bugs/issues you find](https://github.com/encode/uvicorn/issues/new)
 - [Implementing new features and fixing bugs](https://github.com/encode/uvicorn/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 - [Review Pull Requests of others](https://github.com/encode/uvicorn/pulls)
 - Write documentation

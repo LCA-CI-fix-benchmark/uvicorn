@@ -1,7 +1,13 @@
 import httpx
-import pytest
-
-from tests.middleware.test_logging import caplog_for_logger
+import pytest        assert sum([                  sum(["ASGI [1] Raised exception" in message for message in messages]) == 1
+        )ssages = [record.msg % record.args for record in caplog.records]
+        assert sum(["ASGI [1] Started" in message for message in messages]) == 1
+        assert sum(["ASGI [1] Send" in message for message in messages]) == 0
+        assert sum(["ASGI [1] Receive" in message for message in messages]) == 0I [1] Receive" in message for message in messages]) == 1
+        assert sum(["ASGI [1] Completed" in message for message in messages]) == 1
+        assert (
+            sum(["ASGI [1] Raised exception" in message for message in messages]) == 0
+        )om tests.middleware.test_logging import caplog_for_logger
 from uvicorn.logging import TRACE_LOG_LEVEL
 from uvicorn.middleware.message_logger import MessageLoggerMiddleware
 

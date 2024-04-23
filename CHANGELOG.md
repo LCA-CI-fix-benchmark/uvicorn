@@ -21,7 +21,10 @@
 
 ### Added
 
-- Support Python 3.12 (#2145) 04/11/23
+- Suppo- Fix bug where --log-config disables uvicorn loggers (#512) 8/11/20 a9c37cc4
+
+## 0.11.8 - 2020-07-30
+- Add details of the changes or fixes in this versionPython 3.12 (#2145) 04/11/23
 - Allow setting `app` via environment variable `UVICORN_APP` (#2106) 21/09/23
 
 ## 0.23.2 - 2023-07-31

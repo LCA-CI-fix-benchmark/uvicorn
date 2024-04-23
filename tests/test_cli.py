@@ -5,7 +5,11 @@ import platform
 import sys
 from pathlib import Path
 from textwrap import dedent
-from typing import Iterator
+from typing    assert (
+        'Error loading ASGI app. Import string "tests.test_cli" '
+        'must be in format "<module>:<attribute>".'
+    ) in result.output
+    assert result.exit_code == 1Iterator
 from unittest import mock
 
 import pytest

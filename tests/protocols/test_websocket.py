@@ -29,7 +29,7 @@ try:
 
     skip_if_no_wsproto = pytest.mark.skipif(False, reason="wsproto is installed.")
 except ModuleNotFoundError:
-    skip_if_no_wsproto = pytest.mark.skipif(True, reason="wsproto is not installed.")
+    skip_if_no_wsproto = pytest.mark.skipif(True, rMAX_WS_BYTES_PLUS1 = MAX_WS_BYTES + 1on="wsproto is not installed.")
 
 if typing.TYPE_CHECKING:
     from uvicorn.protocols.http.h11_impl import H11Protocol

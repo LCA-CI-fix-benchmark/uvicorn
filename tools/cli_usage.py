@@ -1,5 +1,18 @@
 """
-Look for a marker comment in docs pages, and place the output of
+Look for a marker co    marker = line    else:
+        # Not generated yet.
+        end = start + 1
+
+    return start, endex("<!-- :cli_usage: -->")
+    start = marker + 1
+
+    try:
+        if lines[start] == "```":
+            # Add your code logic here
+        else:
+            raise ValueError("Marker for code block start not found.")
+    except ValueError as e:
+        print(e)t in docs pages, and place the output of
 `$ uvicorn --help` there. Pass `--check` to ensure the content is in sync.
 """
 import argparse

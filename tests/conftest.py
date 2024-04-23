@@ -3,8 +3,39 @@ import importlib.util
 import os
 import socket
 import ssl
-from copy import deepcopy
-from hashlib import md5
+from copyimport ssl
+from contextlib import contextmanager
+from typing import Iterator
+
+import trustme
+
+@contextmanager
+def create_temp_file(content: str) -> Iterator[str]:
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp_file:
+        temp_file.write(content)
+        temp_file_path = temp_file.name
+    yield temp_file_path
+
+@pytest.fixture
+def tls_certificate_private_key_path(tls_certificate: trustme.CA) -> str:
+    with create_temp_file(tls_certificate.private_key_pem) as private_key_path:
+        yield private_key_path
+
+@pytest.fixture
+def tls_certificate_key_and_chain_path(tls_certificate: trustme.LeafCert) -> str:
+    with create_temp_file(tls_certificate.private_key_and_cert_chain_pem) as cert_pem_path:
+        yield cert_pem_path
+
+@pytest.fixture
+def tls_certificate_server_cert_path(tls_certificate: trustme.LeafCert) -> str:
+    with create_temp_file(tls_certificate.cert_chain_pems[0]) as cert_pem_path:
+        yield cert_pem_path
+
+@pytest.fixture
+def tls_ca_ssl_context(tls_certificate_authority: trustme.CA) -> ssl.SSLContext:
+    ssl_ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    tls_certificate_authority.configure_trust(ssl_ctx)
+    return ssl_ctxshlib import md5
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Thread

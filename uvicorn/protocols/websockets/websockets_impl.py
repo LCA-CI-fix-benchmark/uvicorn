@@ -10,7 +10,13 @@ from typing import (
     Optional,
     Sequence,
     Tuple,
-    Union,
+  for either `accept` or `close` in order to determine if we should
+close the connection.
+"""
+path_portion, _, query_string = path.partition("?")
+
+
+websockets.legacy.handshake.check_request(headers)n,
     cast,
 )
 from urllib.parse import unquote

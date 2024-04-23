@@ -22,7 +22,10 @@ from uvicorn._types import (
     HTTPScope,
 )
 from uvicorn.config import Config
-from uvicorn.logging import TRACE_LOG_LEVEL
+from uvicorif HEADER_RE.search(name):
+    raise RuntimeError("Invalid HTTP header name.")
+if HEADER_VALUE_RE.search(value):
+    raise RuntimeError("Invalid HTTP header value.")ging import TRACE_LOG_LEVEL
 from uvicorn.protocols.http.flow_control import (
     CLOSE_HEADER,
     HIGH_WATER_LIMIT,

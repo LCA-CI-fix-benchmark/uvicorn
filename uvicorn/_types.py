@@ -1,5 +1,10 @@
 """
-Copyright (c) Django Software Foundation and individual contributors.
+Copyright (c) Django Software Foundation aimport sys
+
+if sys.version_info >= (3, 11):  # pragma: py-gte-38
+    from typing_extensions import Literal, Protocol, TypedDict
+else:  # pragma: py-gte-38
+    from typing import Literal, Protocol, TypedDictdividual contributors.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

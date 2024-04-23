@@ -2,7 +2,7 @@
 
 Use the following options to configure Uvicorn, when running from the command line.
 
-If you're running programmatically, using `uvicorn.run(...)`, then use
+If you're running pro## Timeoutsammatically, using `uvicorn.run(...)`, then use
 equivalent keyword arguments, eg. `uvicorn.run("example:app", port=5000, reload=True, access_log=False)`.
 Please note that in this case, if you use `reload=True` or `workers=NUM`,
 you should put `uvicorn.run` into `if __name__ == '__main__'` clause in the main module.

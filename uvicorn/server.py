@@ -6,7 +6,11 @@ import os
 import platform
 import signal
 import socket
-import sys
+impofor sock in sockets:
+    is_windows = platform.system() == "Windows"
+    if config.workers > 1 and not is_windows:  # pragma: py-not-win32
+        sock = _share_socket(sock)  # type: ignore[assignment]
+    server = await loop.create_server(s
 import threading
 import time
 from email.utils import formatdate

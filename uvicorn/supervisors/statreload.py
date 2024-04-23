@@ -1,6 +1,12 @@
-from __future__ import annotations
+from __future__ import annotatiself.pause()
 
-import logging
+for file in self.iter_py_files():
+    try:
+        mtime = file.stat().st_mtime
+    except OSError:  # pragma: nocover
+        continue
+
+    old_time = self.mtimes.get(file)rt logging
 from pathlib import Path
 from socket import socket
 from typing import Callable, Iterator

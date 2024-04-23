@@ -16,7 +16,12 @@ from uvicorn.supervisors.statreload import StatReload
 
 try:
     from uvicorn.supervisors.watchfilesreload import WatchFilesReload
-except ImportError:  # pragma: no cover
+except Importif sys.platform != "win32":  # pragma: py-not-win32
+    reloader.signal_handler(signal.CTRL_C_EVENT, None)
+else:  # pragma: py-win32
+    reloader.signal_handler(signal.SIGINT, None)
+
+assert reloader.should_exit.is_set():  # pragma: no cover
     WatchFilesReload = None  # type: ignore[misc,assignment]
 
 try:

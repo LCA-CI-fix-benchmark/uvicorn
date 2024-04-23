@@ -1,6 +1,20 @@
 from __future__ import annotations
 
-import logging
+import loimport sys
+
+if sys.platform != "win32":  # pragma: py-not-winimport sys
+
+if sys.platform == "win32":  # pragma: py-win32
+    self.process.terminate()
+else:  # pragma: py-not-win32
+    self.should_exit.set()
+self.process.join()
+
+for sock in self.sockets:self.is_restarting = False
+else:  # pragma: py-win32
+    self.should_exit.set()
+
+def run(self) -> None:
 import os
 import signal
 import sys

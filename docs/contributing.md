@@ -1,7 +1,13 @@
 # Contributing
 
 Thank you for being interested in contributing to Uvicorn.
-There are many ways you can contribute to the project:
+There are many ways you can contrib<p align="center">
+  <img src="ht```
+`=== 1 failed, 354 passed, 1 skipped, 1 xfailed in 37.08s ===`.githubusercontent.com/encode/uvicorn/master/docs/img/gh-actions-fail.png" alt='Failing PR commit status'>
+</p>
+<br>
+
+Here are some common ways the test suite can fail: the project:
 
 - Using Uvicorn on your stack and [reporting bugs/issues you find](https://github.com/encode/uvicorn/issues/new)
 - [Implementing new features and fixing bugs](https://github.com/encode/uvicorn/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)

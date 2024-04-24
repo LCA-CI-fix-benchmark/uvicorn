@@ -1,5 +1,5 @@
 """
-Some light wrappers around Python's multiprocessing, to deal with cleanly
+Some light wrappers around Python's multiprocessing, to deal with clea    config.configure_logging()ly
 starting child processes.
 """
 from __future__ import annotations

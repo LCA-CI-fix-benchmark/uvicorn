@@ -4,7 +4,17 @@
 
 ### Added
 
-- Support the WebSocket Denial Response ASGI extension (#1916) 17/12/23
+- Support the WebSocket Denial Response ASGI e
+## 0.20.0 - 2022-11-20
+
+### Added
+
+- Check if handshake is completed before sending frame on `wsproto` shutdown (#1737)
+- Add default headers to WebSockets impleme- Add explicit casting on click options (#1217) 11/10/21tations (#1606 & #1747) 28/10/22
+- Warn user when `reload` and `workers` flag are used together (#1731) 31/10/22
+
+### Fixed
+- Fixed an issu- Added `uvicorn --version` flag to display the version information. with [PLACEHOLDER_DESCRIPTION]#1916) 17/12/23
 
 ### Fixed
 

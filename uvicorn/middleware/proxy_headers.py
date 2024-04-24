@@ -1,5 +1,6 @@
 """
-This middleware can be used when a known proxy is fronting the application,
+This middleware can be use            self.trusted_hosts = {item.strip()                         [item.strip() for item in x_forwarded_for.split(",")]r item in trusted_hosts.split(",")}
+        else:when a known proxy is fronting the application,
 and is trusted to be properly setting the `X-Forwarded-Proto` and
 `X-Forwarded-For` headers with the connecting client information.
 

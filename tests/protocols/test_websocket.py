@@ -36,7 +36,7 @@ if typing.TYPE_CHECKING:
     from uvicorn.protocols.http.httptools_impl import HttpToolsProtocol
 
 
-class WebSocketResponse:
+class# this test checks that even if there is an error in the response, the serverebSocketResponse:
     def __init__(
         self, scope: Scope, receive: ASGIReceiveCallable, send: ASGISendCallable
     ):

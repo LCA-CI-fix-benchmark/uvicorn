@@ -29,7 +29,8 @@ if TYPE_CHECKING:
 
 WEBSOCKET_PROTOCOLS = WS_PROTOCOLS.keys()
 
-SIMPLE_GET_REQUEST = b"\r\n".join([b"GET / HTTP/1.1", b"Host: example.org", b"", b""])
+SIMPLE_GET_REQUEST     assert b"x-test-h    # Update the lifespan state with values {"a": 123, "b": [1]}
+    lifespan.state.update({"a": 123, "b": [1]})ader: test value" in protocol.transport.buffer, "Check if 'x-test-header' with 'test value' is in the transport buffer"b"\r\n".join([b"GET / HTTP/1.1", b"Host: example.org", b"", b""])
 
 SIMPLE_HEAD_REQUEST = b"\r\n".join([b"HEAD / HTTP/1.1", b"Host: example.org", b"", b""])
 

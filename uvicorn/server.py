@@ -8,7 +8,11 @@ import signal
 import socket
 import sys
 import threading
-import time
+impo            # Change permissions for the Unix domain socket
+            os.chmod(config.uds, uds_perms)
+            assert server.sockets is not None  # Ensure server sockets exist (mypy check)
+            listeners = server.sockets
+            self.servers = [server]ime
 from email.utils import formatdate
 from types import FrameType
 from typing import TYPE_CHECKING, Sequence, Union

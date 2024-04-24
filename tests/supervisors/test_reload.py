@@ -1,8 +1,72 @@
 import logging
 import platform
-import signal
-import socket
-import sys
+impoimport pytest
+from pathlib import Path
+from typing import Optional, Type
+from uvicorn.supervisors.base_reload import BaseReload
+from uvicorn.supervisors.watchgodreloaimport pytest
+from uvicorn.supeimport pytest
+from uvicorn.config import Config
+from uvicorn.supervisors.base_reload import BaseReload
+from uvicorn.supervisors.statreload import StatReload
+from uvicorn.supervisors.watchgodreload import WatchGodReload
+from uvicorn.supervisors.watchfilesreload import WatchFilesReload
+
+class TestBaseReload:
+    @pytest.mark.parametrize(
+        "reloader_class",
+        [
+            StatReload,
+            WatchGodReload,
+            pytest.param(WatchFilesReload, marks=skip_if_m1),
+        ],
+    )
+    def test_should_not_reload_when_only_subdirectory_is_watched(
+        self, touch_soon
+    ) -> None:
+        app_dir = self.reload_path / "app"
+        app_dir_file = self.reload_path / "app" / "src" / "main.py"
+        root_file = self.reload_path / "main.py"
+
+        config = Config(
+            app="tests.test_config:asgi_app",
+            reload=True,
+            reload_dirs=[str(app_dir)],
+        )
+        reloader = self._setup_reloader(config)
+
+        assert self._reload_tester(touch_soon, reloader, app_dir_file)
+        assert not self._reload_tester(
+            touch_soon, reloader, root_file, app_dir / "~ignored"
+        )
+
+        reloader.shutdown()BaseReload
+
+class TestBaseReload:
+    def test_reloader_shutdown(self):
+        reloader = BaseReload()  # Create an instance of the reloader
+        reloader.shutdown()  # Shutdown the reloaderimport WatchGodReload
+
+class TestBaseReload:
+    @pytest.fixture(autouse=True)
+    def setup(
+        self,
+        reload_directory_structure: Path,
+        reloader_class: Optional[Type[BaseReload]],
+    ):
+        if reloader_class is None:  # pragma: no cover
+            pytest.skip("Needed dependency not installed")
+        self.reload_path = reload_directory_structure
+        self.reloader_class = reloader_class
+
+    def _setup_reloader(self, config: Config) -> BaseReload:
+        config.reload_delay = 0  # save time
+
+        if self.reloader_class is WatchGodReload:
+            with pytest.deprecated_call():
+                reloader = self.reloader_class(config, target=run, sockets=[])
+        else:
+            reloader = self.reloader_class(config, target=run, sockets=[])import sys
 from pathlib import Path
 from time import sleep
 from typing import List, Optional, Type

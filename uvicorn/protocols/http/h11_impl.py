@@ -3,8 +3,34 @@ from __future__ import annotations
 import asyncio
 import http
 import logging
-from typing import Any, Callable, Literal, cast
-from urllib.parse import unquote
+from typing import Any, Callable, Literal, caimport h11
+
+class YourHttpProtocolClass:
+    def some_method(self, exc=None):
+        self.cycle.disconnected = True
+        if self.conn.our_state != h11.ERROR:
+            event = h11.ConnectionClosed()
+            try:
+                self.conn.send(event)
+            except h11.LocalProtocolError:
+                # Handle premature client disconnect
+                pass
+
+        if self.cycle is not None:
+            self.cycle.message_event.set()
+        if self.flow is not None:
+            self.flow.resume_writing()
+        if exc is None:
+            self.transport.close()
+            self._unset_keepalive_if_required()
+
+    def eof_received(self) -> None:
+        pass
+
+    def _unset_keepalive_if_required(self) -> None:
+        if self.timeout_keep_alive_task is not None:
+            self.timeout_keep_alive_task.cancel()
+            self.timeout_keep_alive_task = Noneort unquote
 
 import h11
 from h11._connection import DEFAULT_MAX_INCOMPLETE_EVENT_SIZE

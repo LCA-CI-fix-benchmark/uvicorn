@@ -1,6 +1,27 @@
-import signal
+import sigimport signal
 import socket
 from typing import List, Optional
+
+from uvicorn.supervisors.multiprocess import Multiprocess
+from uvicorn.config import Config
+
+def run(sockets: Optional[List[socket.socket]]) -> None:
+    """
+    Function to run a no-op server.
+    """
+    pass  # Implementation of no-op server logic
+
+def test_multiprocess_run() -> None:
+    """
+    A basic sanity check.
+
+    Simply run the supervisor against a no-op server, and signal for it to
+    quit immediately.
+    """
+    config = Config(app=app, workers=2)
+    supervisor = Multiprocess(config, target=run, sockets=[])
+    supervisor.signal_handler(sig=signal.SIGINT, frame=None)
+    supervisor.run()om typing import List, Optional
 
 from uvicorn import Config
 from uvicorn._types import ASGIReceiveCallable, ASGISendCallable, Scope

@@ -1,5 +1,22 @@
-import asyncio
-import importlib
+import asyncimport importlib
+
+try:
+    importlib.import_module("uvloop")
+    expected_loop = "uvloop"  # pragma: py-win32
+except ImportError:  # pragma: py-not-win32
+    expected_loop = "asyncio"
+
+try:
+    importlib.import_module("httptools")
+    expected_http = "HttpToolsProtocol"
+except ImportError:  # pragma: no cover
+    expected_http = "H11Protocol"
+
+try:
+    importlib.import_module("websockets")
+    expected_websockets = "WebSocketProtocol"
+except ImportError:  # pragma: no cover
+    expected_websockets = "WSProtocol"ib
 
 import pytest
 

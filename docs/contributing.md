@@ -3,7 +3,14 @@
 Thank you for being interested in contributing to Uvicorn.
 There are many ways you can contribute to the project:
 
-- Using Uvicorn on your stack and [reporting bugs/issues you find](https://github.com/encode/uvicorn/issues/new)
+- Using Uvicorn on your s- **Changelog Update**:
+    - Follow the format from [keepachangelog](https://keepachangelog.com/en/1.0.0/).
+    - Compare `master` with the latest release tag on [GitHub](https://github.com/encode/uvicorn/compare/).
+    - Include added, changed, deprecated, or removed features, and bug fixes in the changelog.
+    - Exclude changes to documentation, tests, or tooling from the changelog.
+    - Sort entries in descending order of impact/importance.
+    - Keep the changelog concise and focused. 🎯
+- **Version Bump**: Refer to `__init__.py` for version update.[reporting bugs/issues you find](https://github.com/encode/uvicorn/issues/new)
 - [Implementing new features and fixing bugs](https://github.com/encode/uvicorn/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 - [Review Pull Requests of others](https://github.com/encode/uvicorn/pulls)
 - Write documentation

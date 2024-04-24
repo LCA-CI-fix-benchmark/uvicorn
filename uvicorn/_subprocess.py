@@ -1,5 +1,49 @@
 """
-Some light wrappers around Python's multiprocessing, to deal with cleanly
+Some light wrappers arounimport sys
+from typing import Optional
+import os
+import sys
+
+def some_function(target, sockets, stdin_fileno):
+    """
+    Function description here.
+
+    Parameters:
+    * target - A callable that accepts a list of sockets.
+    * sockets - A list of sockets to pass to the server.
+    * stdin_fileno - The file number of sys.stdin to reattach to the child process.
+    """
+    # Reopen stdin if a fileno is provided
+    if stdin_fileno is not None:
+        sys.stdin = os.fdopen(stdin_fileno)
+
+    # Reconfigure logging for each child process
+    config.configure_logging()
+
+    # Call Server.run(sockets=sockets) after setupion(config, target, sockets):
+    """
+    Function description here.
+
+    Parameters:
+    * config - Configuration data for the function.
+    * target - A callable that accepts a list of sockets.
+    * sockets - A list of sockets to pass to the server.
+    """
+    # Obtain the fileno of stdin if available
+    stdin_fileno: Optional[int]
+    try:
+        stdin_fileno = sys.stdin.fileno()
+    except OSError:
+        stdin_fileno = None
+
+    kwargs = {
+        "config": config,
+        "target": target,
+        "sockets": sockets,
+        "stdin_fileno": stdin_fileno,
+    }
+
+    return spawn.Process(target=subprocess_started, kwargs=kwargs)ssing, to deal with cleanly
 starting child processes.
 """
 from __future__ import annotations

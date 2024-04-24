@@ -4,8 +4,36 @@ import logging
 import os
 import signal
 import sys
-import threading
-from pathlib import Path
+impimport os
+import signal
+import sys
+
+from uvicorn.subprocess import get_subprocess
+
+class BaseReload:
+    def restart(self) -> None:
+        if sys.platform == "win32":  # pragma: py-not-win32
+            self.is_restarting = True
+            assert self.process.pid is not None
+            os.kill(self.process.pid, signal.CTRL_C_EVENT)
+        else:  # pragma: py-win32
+            self.process.terminate()
+        self.process.join()
+
+        self.process = get_subprocess(
+            config=self.config, target=self.target, sockets=self.sockets
+        )
+        self.process.start()
+
+    def shutdown(self) -> None:
+        if sys.platform == "win32":
+            self.should_exit.set()  # pragma: py-not-win32
+        else:
+            self.process.terminate()  # pragma: py-win32
+        self.process.join()
+
+        for sock in self.sockets:
+            sock.close()hlib import Path
 from socket import socket
 from types import FrameType
 from typing import Callable, Iterator

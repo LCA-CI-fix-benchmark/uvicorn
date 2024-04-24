@@ -15,8 +15,36 @@
 
 ### Fixed
 
-- Allow explicit hidden file paths on `--reload-include` (#2176) 08/12/23
-- Properly annotate `uvicorn.run()` (#2158) 22/11/23
+- Allow explicit hidden file paths on `--reload-include` (### 0.11.7 - 2020-28-07
+
+* SECUR## 0.11.0
+
+* Fix reload/multiprocessing on Windows with Python 3.8.
+* Drop IOCP support. (Required for fix above.)
+* Add `uvicorn --version` flag.
+* Add `--use-colors` and `--no-use-colors` flags.
+* Display port correctly, when auto port selection is used with `--port=0`.
+* Use a more liberal `h11` dependency. Either `0.8.*` or `0.9.*`.revent sending invalid HTTP header names and values. (Pull #725)
+* SECURITY FIX: Ensure path value is escaped before logging to the console. (Pull #724)
+* Fix `--proxy-headers` client IP and host when using a Unix socket. (Pull #636)
+* Fix a regression that caused Uvicorn to crash when using unix domain sockets. (Pull #729)
+
+## 0.11.6
+
+* Fix overriding the root logger.
+
+## 0.11.5
+
+* Revert "Watch all files, not just .py" due to unexpected side effects.
+* Revert "Pass through gunicorn timeout config." due to unexpected side effects.
+
+## 0.11.4
+
+* Use `watchgod`, if installed, for watching code changes.
+* Watch all files, not just .py.
+* Pass through gunicorn timeout config.
+
+## 0.11.3 annotate `uvicorn.run()` (#2158) 22/11/23
 
 ## 0.24.0.post1 - 2023-11-06
 

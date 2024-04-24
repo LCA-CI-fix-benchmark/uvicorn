@@ -4,8 +4,33 @@ import asyncio
 import logging
 import os
 import platform
-import signal
+impimport asyncio
 import socket
+from typing import Sequence
+
+def create_protocol(
+    _loop: asyncio.AbstractEventLoop | None = None,
+) -> asyncio.Protocol:
+    return config.http_protocol_class(  # type: ignore[call-arg]
+        config=config,
+        server_state=self.server_state,
+        app_state=self.lifespan.state,
+        _loop=_loop,
+    )
+
+loop = asyncio.get_running_loop()
+
+listeners: Sequence[socket.SocketType]
+if sockets is not None:
+    # Explicitly passed a list of open sockets.
+    # We use this when the server is run from a Gunicorn worker.
+
+    def _share_socket(
+        sock: socket.SocketType,
+    ) -> socket.SocketType:  # pragma py-linux pragma: py-darwin
+        # Windows requires the socket be explicitly shared across
+        # multiple workers (processes).
+        from socket import fromshare  # type: ignore[attr-defined]
 import sys
 import threading
 import time

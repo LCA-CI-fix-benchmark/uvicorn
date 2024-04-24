@@ -23,7 +23,15 @@ except ModuleNotFoundError:
     skip_if_no_httptools = pytest.mark.skipif(True, reason="httptools is not installed")
 
 if TYPE_CHECKING:
-    from uvicorn.protocols.websockets.websockets_impl import WebSocketProtocol
+    frimport asyncio
+
+# Initialize the protocol object
+protocol = YourProtocolClass()
+
+protocol.data_received(UPGRADE_HTTP2_REQUEST)
+await protocol.loop.run_one()
+assert b"HTTP/1.1 200 OK" in protocol.transport.buffer
+assert b"Hello, world" in protocol.transport.buffervicorn.protocols.websockets.websockets_impl import WebSocketProtocol
     from uvicorn.protocols.websockets.wsproto_impl import WSProtocol
 
 

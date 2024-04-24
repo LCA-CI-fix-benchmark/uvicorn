@@ -1,5 +1,41 @@
-"""
-Copyright (c) Django Software Foundation and individual contributors.
+"# Copyright information and usage conditions
+
+from __future__ import annotations
+
+import sys
+import types
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Iterable,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
+
+if sys.version_info >= (3, 8):  # pragma: py-lt-38
+    from typing import Literal, Protocol, TypedDict
+else:  # pragma: py-gte-38
+    from typing_extensions import Literal, Protocol, TypedDict
+
+if sys.version_info >= (3, 11):  # pragma: py-lt-311
+    from typing import NotRequired
+else:  # pragma: py-gte-311
+    from typing_extensions import NotRequired
+
+# WSGI types
+Environ = MutableMapping[str, Any]
+ExcInfo = Tuple[Type[BaseException], BaseException, Optional[types.TracebackType]]
+StartResponse = Callable[[str, Iterable[Tuple[str, str]], Optional[ExcInfo]], None]
+WSGIApp = Callable[[Environ, StartResponse], Union[Iterable[bytes], BaseException]]
+
+# ASGI
+class ASGIVersions(TypedDict):
+    spec_version: str
+    version: Literal["2.0"] | Literal["3.0"]utors.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

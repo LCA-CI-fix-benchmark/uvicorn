@@ -1,6 +1,12 @@
 # Settings
 
-Use the following options to configure Uvicorn, when running from the command line.
+Use the following optioIf Uvicorn _cannot_ load [watchfiles](https://pypi.org/project/watchfiles/) at runtime, it will periodically look for changes in modification times to all `*.py` files (and only `*.py` files) inside of its monitored directories. See the `--reload-dir` option. Specifying other file extensions is not supported unless watchfiles is installed. See the `--reload-include` and `--reload-exclude` options for details.
+
+### Reloading with watchfiles
+
+For more nuanced control over which file modifications trigger reloads, install `uvicorn[standard]`, which includes watchfiles as a dependency. Alternatively, install [watchfiles](https://pypi.org/project/watchfiles/) where Uvicorn can see it.
+
+Using Uvicorn with watchfiles will enable the following options (which are otherwise ignored):nfigure Uvicorn, when running from the command line.
 
 If you're running programmatically, using `uvicorn.run(...)`, then use
 equivalent keyword arguments, eg. `uvicorn.run("example:app", port=5000, reload=True, access_log=False)`.

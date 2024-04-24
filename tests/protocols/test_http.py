@@ -29,7 +29,25 @@ if TYPE_CHECKING:
 
 WEBSOCKET_PROTOCOLS = WS_PROTOCOLS.keys()
 
-SIMPLE_GET_REQUEST = b"\r\n".join([b"GET / HTTP/1.1", b"Host: example.org", b"", b""])
+SIMPLE_Gasync def test_iterator_headers(
+    http_protocol_cls: "Type[HttpToolsProtocol | H11Protocol]",
+):
+    async def app(scope: Scope, receive: ASGIReceiveCallable, send: ASGISendCallable):
+        headers = [(b"x-test-header", b"test value")]
+        await send({"type": "http.response.start", "status": 200, "headers": headers})
+        await send({"type": "http.response.body", "body": b""})
+
+    protocol = get_connected_protocol(app, http_protocol_cls)
+    protocol.data_received(SIMPLE_GET_REQUEST)
+    await protocol.loop.run_one()
+    assert b"x-test-header: test value" in protocol.transport.buffer
+
+
+@pytest.mark.anyio
+async def test_lifespan_state(
+    http_protocol_cls: "Type[HttpToolsProtocol | H11Protocol]",
+):
+    expected_states = [{"a": 123, "b": [1]}, {"a": 123, "b": [1, 2]}]".join([b"GET / HTTP/1.1", b"Host: example.org", b"", b""])
 
 SIMPLE_HEAD_REQUEST = b"\r\n".join([b"HEAD / HTTP/1.1", b"Host: example.org", b"", b""])
 

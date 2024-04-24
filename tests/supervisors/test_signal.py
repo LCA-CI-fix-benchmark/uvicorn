@@ -1,6 +1,20 @@
-import asyncio
-import signal
-from asyncio import Event
+import asynciasync def test_sigint_finish_req(unused_tcp_port: int):
+    """
+    1. Request is sent
+    2. Sigint is sent to uvicorn
+    3. Shutdown sequence starts
+    4. Request is finished before timeout_graceful_shutdown=1
+
+    Result: Request should go through, even though the server was cancelled.
+    """
+
+    server_event = Event()
+
+    async def wait_app(scope, receive, send):
+        await send({"type": "http.response.start", "status": 200, "headers": []})
+        await send({"type": "http.response.body", "body": b"start", "more_body": True})
+        await server_event.wait()
+        await send({"type": "http.response.body", "body": b"end", "more_body": False})rom asyncio import Event
 
 import httpx
 import pytest

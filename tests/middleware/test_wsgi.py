@@ -3,8 +3,19 @@ import sys
 from typing import AsyncGenerator, Callable, List
 
 import a2wsgi
-import httpx
-import pytest
+impasync def test_wsgi_exception(wsgi_middleware: Callable) -> None:
+    # Note that we're testing the WSGI app directly here.
+    # The HTTP protocol implementations would catch this error and return 500.
+    app = wsgi_middleware(raise_exception)
+    async with httpx.AsyncClient(app=app, base_url="http://testserver") as client:
+        with pytest.raises(RuntimeError):
+            response = await client.get("/")
+            assert response.status_code == 500
+
+
+@pytest.mark.anyio
+async def test_wsgi_exc_info(wsgi_middleware: Callable) -> None:
+    # Add test scenarios for WSGI middleware handling exception informationmport pytest
 
 from uvicorn._types import Environ, HTTPRequestEvent, HTTPScope, StartResponse
 from uvicorn.middleware import wsgi

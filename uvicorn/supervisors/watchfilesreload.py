@@ -1,8 +1,23 @@
 from __future__ import annotations
 
 from pathlib import Path
-from socket import socket
-from typing import Callable
+from socket import        self.watcher = watch(
+            *self.reload_dirs,
+            watch_filter=None,
+            stop_event=self.should_exit,
+            # using yield_on_timeout here mostly to make sure tests don't
+            # hang forever, won't affect the class's behavior
+            yield_on_timeout=True,
+        )
+
+    def should_restart(self) -> List[Path] | None:
+        self.pause()
+
+        changes = next(self.watcher)
+        if changes:
+            unique_paths = {Path(c[1]) for c in changes}
+            return [p for p in unique_paths if self.watch_filter(p)]
+        return Noneg import Callable
 
 from watchfiles import watch
 

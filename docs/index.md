@@ -1,8 +1,6 @@
 <p align="center">
-  <img width="320" height="320" src="../../uvicorn.png" alt='uvicorn'>
-</p>
-
-<p align="center">
+  <img width="320" height="320" src="../../uvicorn.png" alt='uvic```shell
+$ uvicorn main:app align="center">
 <em>An ASGI web server, for Python.</em>
 </p>
 

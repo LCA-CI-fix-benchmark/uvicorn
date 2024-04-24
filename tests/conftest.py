@@ -1,7 +1,68 @@
 import contextlib
-import importlib.util
-import os
-import socket
+import import pytest
+from uvicorn.importer import import_from_string
+imporimport pytest
+import ssl
+import trustme
+
+def tls_certificate_private_key_path(tls_certificate: "trustme.CA"):
+    with tls_certificate.private_key_pem.tempfile() as private_key:
+        yield private_key
+
+
+@pytest.fixture
+def tls_certificate_key_and_chain_path(tls_certificate: "trustme.LeafCert"):
+    with tls_certificate.private_key_and_cert_chain_pem.tempfile() as cert_pem:
+        yield cert_pem
+
+
+@pytest.fixture
+def tls_certificate_server_cert_path(tls_certificate: "trustme.LeafCert"):
+    with tls_certificate.cert_chain_pems[0].tempfile() as cert_pem:
+        yield cert_pem
+
+
+@pytest.fixture
+def tls_ca_ssl_context(tls_certificate_authority: "trustme.CA") -> ssl.SSLContext:
+    ssl_ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    tls_certificate_authority.configure_trust(ssl_ctx)
+    return ssl_ctx
+
+
+@pytest.fixture(scope="package")
+def reload_directory_structure(tmp_path_factory: pytest.TempPathFactory):
+    # Add the necessary code for the reload_directory_structure fixtureicitly turn the propagate on just for tests, because pytest
+# caplog not able to capture no-propagate loggers.
+#
+# And the caplog_for_logger helper also not work on test config cases, because
+# when create Config object, Config.configure_logging will remove caplog.handler.
+#
+# The simple solution is set propagate=True before execute tests.
+#
+# See also: https://github.com/pytest-dev/pytest/issues/3697
+LOGGING_CONFIG = {
+    "loggers": {
+        "uvicorn": {
+            "propagate": True
+        }
+    }
+}
+
+
+@pytest.fixture
+def tls_certificate_authority() -> "trustme.CA":
+    if not HAVE_TRUSTME:
+        pytest.skip("trustme not installed")  # pragma: no cover
+    return trustme.CA()
+
+
+@pytest.fixture
+def tls_certificate(tls_certificate_authority: "trustme.CA") -> "trustme.LeafCert":
+    return tls_certificate_authority.issue_cert(
+        "localhost",
+        "127.0.0.1",
+        "::1",
+    )ort socket
 import ssl
 from copy import deepcopy
 from hashlib import md5

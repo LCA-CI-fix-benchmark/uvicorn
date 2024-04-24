@@ -6,7 +6,12 @@ As a general rule, you probably want to:
 
 * Run `uvicorn --reload` from the command line for local development.
 * Run `gunicorn -k uvicorn.workers.UvicornWorker` for production.
-* Additionally run behind Nginx for self-hosted deployments.
+* Additionall## Running with HTTPS
+
+To run uvicorn with HTTPS, you need a certificate and a private key. The recommended way to obtain them is by using [Let's Encrypt][letsencrypt].
+
+For local development with HTTPS, you can use [mkcert][mkcert] to generate a valid certificate and private key.
+ Nginx for self-hosted deployments.
 * Finally, run everything behind a CDN for caching support, and serious DDOS protection.
 
 ## Running from the command line

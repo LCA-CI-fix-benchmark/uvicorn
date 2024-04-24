@@ -38,7 +38,29 @@ if typing.TYPE_CHECKING:
 
 class WebSocketResponse:
     def __init__(
-        self, scope: Scope, receive: ASGIReceiveCallable, send: ASGISendCallable
+  async def test_server_reject_connection_with_body_nolength(
+    ws_protocol_cls: "typing.Type[WSProtocol | WebSocketProtocol]",
+    http_protocol_cls: "typing.Type[H11Protocol | HttpToolsProtocol]",
+    unused_tcp_port: int,
+):
+    # test that the server can send a response with a body but no content-length
+    async def app(scope: Scope, receive: ASGIReceiveCallable, send: ASGISendCallable):
+        assert scope["type"] == "websocket"
+        assert "extensions" in scope
+        assert "websocket.http.response" in scope["extensions"]
+
+        # Pull up first recv message.
+        message = await receive()
+        assert message["type"] == "websocket.connect"
+
+        await send(
+            {
+                "type": "websocket.http.response.start",
+                "status": 403,
+                "headers": [(b"content-length", b"9")],
+            }
+        )
+        await send({"type": "websocket.http.response.body", "body": b"hardbody"})e, receive: ASGIReceiveCallable, send: ASGISendCallable
     ):
         self.scope = scope
         self.receive = receive

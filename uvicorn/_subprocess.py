@@ -1,6 +1,20 @@
 """
-Some light wrappers around Python's multiprocessing, to deal with cleanly
-starting child processes.
+Some light wrappers around Python's multiprocessing, to de    * target - A callable that accepts a list of sockets. In practice, this will
+               be the `Server.run()` method.
+    * sockets - A list of sockets to pass to the server. Sockets are bound once
+                by the parent process and then passed to the child processes.
+    * stdin_fileno - The file number of sys.stdin, so that it can be reattached
+                     to the child process.
+    """
+    # Re-open stdin.
+    if stdin_fileno is not None:
+        sys.stdin = os.fdopen(stdin_fileno)
+
+    # Logging needs to be set up again for each child.
+    config.configure_logging()
+
+    # Now we can call into `Server.run(sockets=sockets)`
+    target(sockets=sockets)starting child processes.
 """
 from __future__ import annotations
 

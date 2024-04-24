@@ -1,5 +1,15 @@
-"""
-Look for a marker comment in docs pages, and place the output of
+""""
+import argparse
+import subprocess
+import sys
+import typing
+from pathlib import Path
+
+
+def _get_usage_lines() -> typing.List[str]:
+    res = subprocess.run(["uvicorn", "--help"], stdout=subprocess.PIPE)
+    help_text = res.stdout.decode("utf-8")
+    return ["```", "$ uvicorn --help", *help_text.splitlines(), "```"]marker comment in docs pages, and place the output of
 `$ uvicorn --help` there. Pass `--check` to ensure the content is in sync.
 """
 import argparse

@@ -1,9 +1,22 @@
 # Contributing
 
 Thank you for being interested in contributing to Uvicorn.
-There are many ways you can contribute to the project:
+There are many ways you can coOnce you've submitted your pull request, the test suite will automatically run, and the results will show up in GitHub. If the test suite fails, you'll want to click through to the "Details" link and try to identify why the test suite failed.
 
-- Using Uvicorn on your stack and [reporting bugs/issues you find](https://github.com/encode/uvicorn/issues/new)
+<p align="center" style="margin: 0 0 10px">
+  <img src="https://raw.githubusercontent.com/encode/uvicorn/master/docs/img/gh-actions-fail.png" alt='Failing PR commit status'>
+</p>
+
+Here are some common ways the test suite can fail:
+
+### Check Job Failed
+
+<p align="center" style="margin: 0 0 10px">
+  <img src="https://raw.githubusercontent.com/encode/uvicorn/master/docs/img/gh-actions-fail-check.png" alt='Failing GitHub action lint job'>
+</p>
+
+This job failing means there is either a code formatting issue or a type-annotation issue. You can look at the job output to figure out why it's failed or within a shell run:
+eporting bugs/issues you find](https://github.com/encode/uvicorn/issues/new)
 - [Implementing new features and fixing bugs](https://github.com/encode/uvicorn/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 - [Review Pull Requests of others](https://github.com/encode/uvicorn/pulls)
 - Write documentation

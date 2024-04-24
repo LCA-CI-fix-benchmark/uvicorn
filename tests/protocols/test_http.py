@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 WEBSOCKET_PROTOCOLS = WS_PROTOCOLS.keys()
 
-SIMPLE_GET_REQUEST = b"\r\n".join([b"GET / HTTP/1.1", b"Host: example.org", b"", b""])
+SIMPLE_GET_REQUEST = b    assert b"x-test-header: test value" in protocol.transport.get_written_data()\r\n".join([b"GET / HTTP/1.1", b"Host: example.org", b"", b""])
 
 SIMPLE_HEAD_REQUEST = b"\r\n".join([b"HEAD / HTTP/1.1", b"Host: example.org", b"", b""])
 

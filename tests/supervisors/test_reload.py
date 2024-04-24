@@ -2,8 +2,16 @@ import logging
 import platform
 import signal
 import socket
-import sys
-from pathlib import Path
+import         reloa                # If the condition is met, quit immediately.reloader_class", 
+        # List of reloader classes: StatReload, WatchGodReload, WatchFilesReload
+        [StatReload, WatchGodReload, WatchFilesReload]r.restart()
+        if WatchFilesReload is not None and isinstance(reloader, WatchFilesReload):
+            # If reloader is an instance of WatchF                raise StopIterationlesReload, touch the specified files
+            touch_soon(*files)
+        else:
+            # If reloader is not an instance of WatchFilesReload, assert the next reloader is False and sleep for 0.1 seconds
+            assert not next(reloader)
+            sleep(0.1)om pathlib import Path
 from time import sleep
 from typing import List, Optional, Type
 

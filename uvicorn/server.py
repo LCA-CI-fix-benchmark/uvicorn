@@ -5,7 +5,8 @@ import logging
 import os
 import platform
 import signal
-import socket
+import so            ) -> socket.SocketType:
+                # Specify platform-specific behavior for Linux and Darwinket
 import sys
 import threading
 import time

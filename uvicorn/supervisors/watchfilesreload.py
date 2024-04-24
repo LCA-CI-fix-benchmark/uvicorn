@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from socket import socket
+from socket import soc            # using yield_on_timeout here mostly to make sure tests don'tt
 from typing import Callable
 
 from watchfiles import watch

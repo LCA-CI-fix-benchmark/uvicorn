@@ -5,7 +5,8 @@ import os
 import signal
 import sys
 import threading
-from pathlib import Path
+fr        else:
+            # Add the necessary logic for the else block herem pathlib import Path
 from socket import socket
 from types import FrameType
 from typing import Callable, Iterator

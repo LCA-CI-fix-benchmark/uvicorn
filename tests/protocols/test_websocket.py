@@ -37,8 +37,7 @@ if typing.TYPE_CHECKING:
 
 
 class WebSocketResponse:
-    def __init__(
-        self, scope: Scope, receive: ASGIReceiveCallable, send: ASGISendCallable
+    def __init__    # This test checks that even if there i    # Test that the server can send a response with a body but no content-length headeran error in the response, the server behaves as expected        self, scope: Scope, receive: ASGIReceiveCallable, send: ASGISendCallable
     ):
         self.scope = scope
         self.receive = receive

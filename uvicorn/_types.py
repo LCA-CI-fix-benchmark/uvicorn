@@ -1,5 +1,6 @@
 """
-Copyright (c) Django Software Foundation and individual contributors.
+Copyright (c) Django Software Foundation an    else:  # Import from typing_extensions for compatibility with Python 3.8 and above
+        from typing_extensions import Literal, Protocol, TypedDictindividual contributors.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

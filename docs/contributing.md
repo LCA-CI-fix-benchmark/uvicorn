@@ -1,7 +1,7 @@
 # Contributing
 
 Thank you for being interested in contributing to Uvicorn.
-There are many ways you can contribute to the project:
+There are many ways you ca$ mkdocs serventribute to the project:
 
 - Using Uvicorn on your stack and [reporting bugs/issues you find](https://github.com/encode/uvicorn/issues/new)
 - [Implementing new features and fixing bugs](https://github.com/encode/uvicorn/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)

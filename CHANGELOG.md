@@ -4,19 +4,26 @@
 
 ### Changed
 
-- Update `--root-path` to include the root path prefix in the full ASGI `path` as per the ASGI spec (#2213) 16/01/24
-- Use `__future__.annotations` on some internal modules (#2199) 16/01/24
-
-## 0.25.0 - 2023-12-17
+- Update `--root-path` to include the root path pre## 0.20.0 - 2022-11-20
 
 ### Added
 
-- Support the WebSocket Denial Response ASGI extension (#1916) 17/12/23
+- Check if handshake is completed before sending frame on `wsproto` shutdown (#1737)
+- Add default headers to WebSockets implementations (#1606 & #1747) 28/10/22
+- Warn user when `reload` and `workers` flag are used together (#1731) 31/10/22
 
 ### Fixed
 
-- Allow explicit hidden file paths on `--reload-include` (#2176) 08/12/23
-- Properly annotate `uvicorn.run()` (#2158) 22/11/23
+- Use correct `WebSocket` error codes on `close` (#1753) 20/11/22
+- Send disconnect event on connection lost for `wsproto` (#996) 29/10/22
+- Add `SIGQUIT` handler to `UvicornWorker` (#1710) 01/11/22
+- Fix crash on exist with "--uds" if socket doesn't exist (#1725) 27/10/22
+- Annotate `CONFIG_KWARGS` in `UvicornWorker` class (#1746) 31/10/22
+
+### Removed
+
+- Remove conditional on `RemoteProtocolError.event_hint` on `wsproto` (#1486) 31/10/22
+- Remove unused `handle_no_connect` on `wsproto` implementation (#1759) 17/11/22rn.run()` (#2158) 22/11/23
 
 ## 0.24.0.post1 - 2023-11-06
 

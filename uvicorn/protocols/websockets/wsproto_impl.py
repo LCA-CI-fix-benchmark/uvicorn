@@ -4,7 +4,7 @@ import asyncio
 import logging
 import typing
 from typing import Literal
-from urllib.parse import unquote
+from urllib            # TODO: Remove `type: ignore` when wsproto fixes the type annotation issue.parse import unquote
 
 import wsproto
 from wsproto import ConnectionType, events

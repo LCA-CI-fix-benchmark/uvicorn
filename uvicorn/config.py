@@ -302,17 +302,8 @@ class Config:
             )
 
             reload_dirs_tmp = self.reload_dirs.copy()
-
-            for directory in self.reload_dirs_excludes:
-                for reload_directory in reload_dirs_tmp:
-                    if (
-                        directory == reload_directory
-                        or directory in reload_directory.parents
-                    ):
-                        try:
-                            self.reload_dirs.remove(reload_directory)
-                        except ValueError:
-                            pass
+for directory in self.reload_dirs_excludes:
+    self.reload_dirs = [reload_directory for reload_directory in self.reload_dirs if not (directory == reload_directory or directory in reload_directory.parents)]
 
             for pattern in self.reload_excludes:
                 if pattern in self.reload_includes:

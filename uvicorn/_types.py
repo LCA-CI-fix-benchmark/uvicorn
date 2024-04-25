@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from __future__ import annotations
 
 import sys
+import sys
 import types
 from typing import (
     Any,
@@ -43,9 +44,9 @@ from typing import (
     Union,
 )
 
-if sys.version_info >= (3, 8):  # pragma: py-lt-38
+if sys.version_info >= (3, 8):  # pragma: py-gte-38
     from typing import Literal, Protocol, TypedDict
-else:  # pragma: py-gte-38
+else:  # pragma: py-lt-38
     from typing_extensions import Literal, Protocol, TypedDict
 
 if sys.version_info >= (3, 11):  # pragma: py-lt-311

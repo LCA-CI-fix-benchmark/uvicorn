@@ -23,21 +23,26 @@ class StatReload(BaseReload):
         self.mtimes: dict[Path, float] = {}
 
         if config.reload_excludes or config.reload_includes:
-            logger.warning(
-                "--reload-include and --reload-exclude have no effect unless "
-                "watchfiles is installed."
-            )
+import typing
+from typing import List, Union
+from pathlib import Path
 
-    def should_restart(self) -> list[Path] | None:
-        self.pause()
+logger.warning(
+    "--reload-include and --reload-exclude have no effect unless "
+    "watchfiles is installed."
+)
 
-        for file in self.iter_py_files():
-            try:
-                mtime = file.stat().st_mtime
-            except OSError:  # pragma: nocover
-                continue
+def should_restart(self) -> Union[List[Path], None]:
+    self.pause()
 
-            old_time = self.mtimes.get(file)
+    for file in self.iter_py_files():
+        try:
+            mtime = file.stat().st_mtime
+        except OSError as e:  
+            logger.error(f"Error accessing file: {e}")
+            continue
+
+        old_time = self.mtimes.get(file)
             if old_time is None:
                 self.mtimes[file] = mtime
                 continue

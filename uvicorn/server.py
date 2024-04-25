@@ -122,16 +122,18 @@ class Server:
                 return fromshare(sock_data)
 
             self.servers: list[asyncio.base_events.Server] = []
-            for sock in sockets:
-                is_windows = platform.system() == "Windows"
-                if config.workers > 1 and is_windows:  # pragma: py-not-win32
-                    sock = _share_socket(sock)  # type: ignore[assignment]
-                server = await loop.create_server(
-                    create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog
-                )
-                self.servers.append(server)
-            listeners = sockets
+import platform
+from uvicorn.socket_util import _share_socket
 
+for sock in sockets:
+    is_windows = platform.system() == "Windows"
+    if config.workers > 1 and is_windows:  # pragma: py-not-win32
+        sock = _share_socket(sock)  # type: ignore[assignment]
+    server = await loop.create_server(
+        create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog
+    )
+    self.servers.append(server)
+listeners = sockets
         elif config.fd is not None:  # pragma: py-win32
             # Use an existing socket, from a file descriptor.
             sock = socket.fromfd(config.fd, socket.AF_UNIX, socket.SOCK_STREAM)

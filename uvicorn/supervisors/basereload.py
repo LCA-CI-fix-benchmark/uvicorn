@@ -101,16 +101,18 @@ class BaseReload:
         self.process.start()
 
     def shutdown(self) -> None:
-        if sys.platform == "win32":
-            self.should_exit.set()  # pragma: py-not-win32
-        else:
-            self.process.terminate()  # pragma: py-win32
-        self.process.join()
+import sys
 
-        for sock in self.sockets:
-            sock.close()
+if sys.platform == "win32":
+    self.should_exit.set()  # pragma: py-not-win32
+else:
+    self.process.terminate()  # pragma: py-win32
+self.process.join()
 
-        message = "Stopping reloader process [{}]".format(str(self.pid))
+for sock in self.sockets:
+    sock.close()
+
+message = f"Stopping reloader process [{self.pid}]"
         color_message = "Stopping reloader process [{}]".format(
             click.style(str(self.pid), fg="cyan", bold=True)
         )

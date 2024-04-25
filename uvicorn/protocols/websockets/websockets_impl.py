@@ -182,6 +182,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
             subprotocols.extend([token.strip() for token in header.split(",")])
 
         asgi_headers = [
+        # Add continuation of the code snippet here if needed
             (name.encode("ascii"), value.encode("ascii", errors="surrogateescape"))
             for name, value in headers.raw_items()
         ]

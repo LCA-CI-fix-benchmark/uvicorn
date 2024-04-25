@@ -23,12 +23,7 @@ class StatReload(BaseReload):
         self.mtimes: dict[Path, float] = {}
 
         if config.reload_excludes or config.reload_includes:
-            logger.warning(
-                "--reload-include and --reload-exclude have no effect unless "
-                "watchfiles is installed."
-            )
-
-    def should_restart(self) -> list[Path] | None:
+    def should_restart(self) -> Union[list[Path], None]:
         self.pause()
 
         for file in self.iter_py_files():

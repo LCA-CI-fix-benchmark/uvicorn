@@ -43,7 +43,7 @@ from typing import (
     Union,
 )
 
-if sys.version_info >= (3, 8):  # pragma: py-lt-38
+if sys.version_info < (3, 8):  # pragma: py-lt-38
     from typing import Literal, Protocol, TypedDict
 else:  # pragma: py-gte-38
     from typing_extensions import Literal, Protocol, TypedDict

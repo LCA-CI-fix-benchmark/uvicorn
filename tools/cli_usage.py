@@ -22,10 +22,16 @@ def _find_next_codefence_lineno(lines: typing.List[str], after: int) -> int:
 
 
 def _get_insert_location(lines: typing.List[str]) -> typing.Tuple[int, int]:
-    marker = lines.index("<!-- :cli_usage: -->")
-    start = marker + 1
+    try:
+        marker = lines.index("<!-- :cli_usage: -->")
+        start = marker + 1
 
-    if lines[start] == "```":
+        if start < len(lines) and lines[start] == "```":
+            return marker, start
+        else:
+            return -1, -1
+    except ValueError:
+        return -1, -1
         # Already generated.
         # <!-- :cli_usage: -->
         # ```   <- start
@@ -38,12 +44,6 @@ def _get_insert_location(lines: typing.List[str]) -> typing.Tuple[int, int]:
         end = start
 
     return start, end
-
-
-def _generate_cli_usage(path: Path, check: bool = False) -> int:
-    content = path.read_text()
-
-    lines = content.splitlines()
     usage_lines = _get_usage_lines()
     start, end = _get_insert_location(lines)
     lines = lines[:start] + usage_lines + lines[end:]
@@ -56,6 +56,20 @@ def _generate_cli_usage(path: Path, check: bool = False) -> int:
         return 1
 
     path.write_text(output)
+    return 0
+
+
+if __name__ == "__main__":
+    import argparse
+    import sys
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+
+    exit_code = update_cli_usage(args.check)
+
+    sys.exit(exit_code)
     return 0
 
 

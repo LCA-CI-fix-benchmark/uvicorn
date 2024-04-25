@@ -29,8 +29,6 @@ async def test_message_logger(caplog):
         assert (
             sum(["ASGI [1] Raised exception" in message for message in messages]) == 0
         )
-
-
 @pytest.mark.anyio
 async def test_message_logger_exc(caplog):
     async def app(scope, receive, send):

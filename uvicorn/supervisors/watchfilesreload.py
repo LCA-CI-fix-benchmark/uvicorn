@@ -77,6 +77,8 @@ class WatchFilesReload(BaseReload):
             self.reload_dirs.append(Path.cwd())
 
         self.watch_filter = FileFilter(config)
+        from uvicorn.supervisors.watch import watch
+
         self.watcher = watch(
             *self.reload_dirs,
             watch_filter=None,
@@ -86,7 +88,7 @@ class WatchFilesReload(BaseReload):
             yield_on_timeout=True,
         )
 
-    def should_restart(self) -> list[Path] | None:
+    def should_restart(self) -> Union[List[Path], None]:
         self.pause()
 
         changes = next(self.watcher)

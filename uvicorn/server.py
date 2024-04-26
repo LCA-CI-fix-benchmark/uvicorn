@@ -143,15 +143,18 @@ class Server:
             self.servers = [server]
 
         elif config.uds is not None:  # pragma: py-win32
+            import os
+
             # Create a socket using UNIX domain socket.
-            uds_perms = 0o666
+            uds_perms: int = 0o666
             if os.path.exists(config.uds):
                 uds_perms = os.stat(config.uds).st_mode
-            server = await loop.create_unix_server(
+            server: asyncio.AbstractServer = await loop.create_unix_server(
                 create_protocol, path=config.uds, ssl=config.ssl, backlog=config.backlog
             )
             os.chmod(config.uds, uds_perms)
-            assert server.sockets is not None  # mypy
+            if server.sockets is not None:
+                assert server.sockets is not None  # mypy
             listeners = server.sockets
             self.servers = [server]
 

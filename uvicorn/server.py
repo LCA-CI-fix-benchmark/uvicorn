@@ -297,22 +297,26 @@ class Server:
             await self.lifespan.shutdown()
 
     async def _wait_tasks_to_complete(self) -> None:
-        # Wait for existing connections to finish sending responses.
+        await self.wait_for_connections_to_close()
+
+        await self.wait_for_tasks_to_complete()
+
+        for server in self.servers:
+            await server.wait_closed()
+
+    async def wait_for_connections_to_close(self):
         if self.server_state.connections and not self.force_exit:
             msg = "Waiting for connections to close. (CTRL+C to force quit)"
             logger.info(msg)
             while self.server_state.connections and not self.force_exit:
                 await asyncio.sleep(0.1)
 
-        # Wait for existing tasks to complete.
+    async def wait_for_tasks_to_complete(self):
         if self.server_state.tasks and not self.force_exit:
             msg = "Waiting for background tasks to complete. (CTRL+C to force quit)"
             logger.info(msg)
             while self.server_state.tasks and not self.force_exit:
                 await asyncio.sleep(0.1)
-
-        for server in self.servers:
-            await server.wait_closed()
 
     def install_signal_handlers(self) -> None:
         if threading.current_thread() is not threading.main_thread():

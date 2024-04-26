@@ -306,7 +306,7 @@ def test_ssl_config(
     config.load()
 
     assert config.is_ssl is True
-
+import typing
 
 def test_ssl_config_combined(tls_certificate_key_and_chain_path: str) -> None:
     config = Config(
@@ -325,8 +325,6 @@ def asgi2_app(scope: "Scope") -> typing.Callable:
         pass
 
     return asgi  # pragma: nocover
-
-
 @pytest.mark.parametrize(
     "app, expected_interface", [(asgi_app, "3.0"), (asgi2_app, "2.0")]
 )

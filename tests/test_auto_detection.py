@@ -29,20 +29,19 @@ except ImportError:  # pragma: no cover
 
 
 async def app(scope, receive, send):
+import asyncio
+
     pass  # pragma: no cover
 
 
 # TODO: Add pypy to our testing matrix, and assert we get the correct classes
 #       dependent on the platform we're running the tests under.
 
-
 def test_loop_auto():
     auto_loop_setup()
     policy = asyncio.get_event_loop_policy()
     assert isinstance(policy, asyncio.events.BaseDefaultEventLoopPolicy)
     assert type(policy).__module__.startswith(expected_loop)
-
-
 @pytest.mark.anyio
 async def test_http_auto():
     config = Config(app=app)

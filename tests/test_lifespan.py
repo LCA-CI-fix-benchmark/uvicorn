@@ -134,12 +134,14 @@ def test_lifespan_with_failed_startup(mode, raise_exception, caplog):
         assert message["type"] == "lifespan.startup"
         await send(
             {"type": "lifespan.startup.failed", "message": "the lifespan event failed"}
-        )
-        if raise_exception:
-            # App should be able to re-raise an exception if startup failed.
-            raise RuntimeError()
+import typing
 
-    async def test():
+)
+if raise_exception:
+    # App should be able to re-raise an exception if startup failed.
+    raise RuntimeError()
+
+async def test():
         config = Config(app=app, lifespan=mode)
         lifespan = LifespanOn(config)
 

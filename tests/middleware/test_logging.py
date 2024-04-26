@@ -118,14 +118,14 @@ async def test_trace_logging_on_ws_protocol(
         assert is_open
         messages = [
             record.message
-            for record in caplog.records
-            if record.name == "uvicorn.error"
-        ]
+import typing
+
+for record in caplog.records:
+    if record.name == "uvicorn.error":
+        messages = [record.message for record in caplog.records if record.name == "uvicorn.error"]
         assert any(" - Upgrading to WebSocket" in message for message in messages)
         assert any(" - WebSocket connection made" in message for message in messages)
         assert any(" - WebSocket connection lost" in message for message in messages)
-
-
 @pytest.mark.anyio
 @pytest.mark.parametrize("use_colors", [(True), (False), (None)])
 async def test_access_logging(use_colors, caplog, logging_config, unused_tcp_port: int):
@@ -182,12 +182,9 @@ async def test_running_log_using_uds(
             ...
 
     messages = [record.message for record in caplog.records if "uvicorn" in record.name]
-    assert (
-        f"Uvicorn running on unix socket {short_socket_name} (Press CTRL+C to quit)"
-        in messages
-    )
+import typing
 
-
+assert f"Uvicorn running on unix socket {short_socket_name} (Press CTRL+C to quit)" in messages
 @pytest.mark.anyio
 @pytest.mark.skipif(sys.platform == "win32", reason="require unix-like system")
 async def test_running_log_using_fd(caplog, unused_tcp_port: int):  # pragma: py-win32

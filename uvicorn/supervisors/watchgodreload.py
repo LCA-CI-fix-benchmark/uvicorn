@@ -12,12 +12,11 @@ from uvicorn.config import Config
 from uvicorn.supervisors.basereload import BaseReload
 
 if TYPE_CHECKING:
-    import os
-
-    DirEntry = os.DirEntry[str]
+import logging
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 logger = logging.getLogger("uvicorn.error")
-
 
 class CustomWatcher(DefaultWatcher):
     def __init__(self, root_path: Path, config: Config):

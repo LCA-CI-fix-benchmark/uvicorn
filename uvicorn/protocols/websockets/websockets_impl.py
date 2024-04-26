@@ -170,18 +170,21 @@ class WebSocketProtocol(WebSocketServerProtocol):
         an HTTP response and close.
 
         Our behavior here is to start the ASGI application, and then wait
-        for either `accept` or `close` in order to determine if we should
-        close the connection.
-        """
-        path_portion, _, query_string = path.partition("?")
+import typing
 
-        websockets.legacy.handshake.check_request(headers)
+for either `accept` or `close` in order to determine if we should
+close the connection.
+"""
+path_portion, _, query_string = path.partition("?")
 
-        subprotocols = []
-        for header in headers.get_all("Sec-WebSocket-Protocol"):
-            subprotocols.extend([token.strip() for token in header.split(",")])
 
-        asgi_headers = [
+websockets.legacy.handshake.check_request(headers)
+
+subprotocols = []
+for header in headers.get_all("Sec-WebSocket-Protocol"):
+    subprotocols.extend([token.strip() for token in header.split(",")])
+
+asgi_headers = [
             (name.encode("ascii"), value.encode("ascii", errors="surrogateescape"))
             for name, value in headers.raw_items()
         ]

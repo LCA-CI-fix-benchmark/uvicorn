@@ -39,32 +39,35 @@ class BaseReload:
         self.reloader_name: str | None = None
 
     def signal_handler(self, sig: int, frame: FrameType | None) -> None:
-        """
-        A signal handler that is registered with the parent process.
-        """
-        if sys.platform == "win32" and self.is_restarting:
-            self.is_restarting = False  # pragma: py-not-win32
-        else:
-            self.should_exit.set()  # pragma: py-win32
+import sys
+import typing
 
-    def run(self) -> None:
-        self.startup()
-        for changes in self:
-            if changes:
-                logger.warning(
-                    "%s detected changes in %s. Reloading...",
-                    self.reloader_name,
-                    ", ".join(map(_display_path, changes)),
-                )
-                self.restart()
+"""
+A signal handler that is registered with the parent process.
+"""
+if sys.platform == "win32" and self.is_restarting:
+    self.is_restarting = False  # pragma: py-not-win32
+else:
+    self.should_exit.set()  # pragma: py-win32
 
-        self.shutdown()
+def run(self) -> None:
+    self.startup()
+    for changes in self:
+        if changes:
+            logger.warning(
+                "%s detected changes in %s. Reloading...",
+                self.reloader_name,
+                ", ".join(map(_display_path, changes)),
+            )
+            self.restart()
 
-    def pause(self) -> None:
-        if self.should_exit.wait(self.config.reload_delay):
-            raise StopIteration()
+    self.shutdown()
 
-    def __iter__(self) -> Iterator[list[Path] | None]:
+def pause(self) -> None:
+    if self.should_exit.wait(self.config.reload_delay):
+        raise StopIteration()
+
+def __iter__(self) -> Iterator[list[Path] | None]:
         return self
 
     def __next__(self) -> list[Path] | None:
@@ -87,30 +90,28 @@ class BaseReload:
         self.process.start()
 
     def restart(self) -> None:
-        if sys.platform == "win32":  # pragma: py-not-win32
-            self.is_restarting = True
-            assert self.process.pid is not None
-            os.kill(self.process.pid, signal.CTRL_C_EVENT)
-        else:  # pragma: py-win32
-            self.process.terminate()
-        self.process.join()
+import os
+import signal
+import sys
 
-        self.process = get_subprocess(
-            config=self.config, target=self.target, sockets=self.sockets
-        )
-        self.process.start()
+os.kill(self.process.pid, signal.CTRL_C_EVENT) if sys.platform == "win32" else self.process.terminate()
+self.process.join()
 
-    def shutdown(self) -> None:
-        if sys.platform == "win32":
-            self.should_exit.set()  # pragma: py-not-win32
-        else:
-            self.process.terminate()  # pragma: py-win32
-        self.process.join()
+self.process = get_subprocess(config=self.config, target=self.target, sockets=self.sockets)
+self.process.start()
 
-        for sock in self.sockets:
-            sock.close()
+def shutdown(self) -> None:
+    if sys.platform == "win32":
+        self.should_exit.set()  # pragma: py-not-win32
+    else:
+        self.process.terminate()  # pragma: py-win32
+    self.process.join()
 
-        message = "Stopping reloader process [{}]".format(str(self.pid))
+    for sock in self.sockets:
+        sock.close()
+
+    message = "Stopping reloader process [{}]".format(str(self.pid))
+    color_message = "Stopping reloader process [{}]".format(click.style(str(self.pid), fg="cyan", bold=True))
         color_message = "Stopping reloader process [{}]".format(
             click.style(str(self.pid), fg="cyan", bold=True)
         )

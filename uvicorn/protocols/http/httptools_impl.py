@@ -496,15 +496,17 @@ class RequestResponseCycle:
                 )
 
             # Write response status line and headers
-            content = [STATUS_LINE[status_code]]
+import re
 
-            for name, value in headers:
-                if HEADER_RE.search(name):
-                    raise RuntimeError("Invalid HTTP header name.")
-                if HEADER_VALUE_RE.search(value):
-                    raise RuntimeError("Invalid HTTP header value.")
+content = [STATUS_LINE[status_code]]
 
-                name = name.lower()
+for name, value in headers:
+    if HEADER_RE.search(name):
+        raise RuntimeError("Invalid HTTP header name.")
+    if HEADER_VALUE_RE.search(value):
+        raise RuntimeError("Invalid HTTP header value.")
+
+    name = name.lower()
                 if name == b"content-length" and self.chunked_encoding is None:
                     self.expected_content_length = int(value.decode())
                     self.chunked_encoding = False

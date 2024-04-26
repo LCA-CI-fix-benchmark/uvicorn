@@ -440,7 +440,8 @@ def test_base_reloader_run(tmp_path):
     reloader.run()
 
     assert calls == ["startup", "restart", "shutdown"]
-
+import sys
+import signal
 
 def test_base_reloader_should_exit(tmp_path):
     config = Config(app="tests.test_config:asgi_app", reload=True)

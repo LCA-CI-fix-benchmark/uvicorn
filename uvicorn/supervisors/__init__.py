@@ -4,7 +4,9 @@ from uvicorn.supervisors.basereload import BaseReload
 from uvicorn.supervisors.multiprocess import Multiprocess
 
 if TYPE_CHECKING:
-    ChangeReload: Type[BaseReload]
+import typing
+
+ChangeReload: Type[BaseReload]
 else:
     try:
         from uvicorn.supervisors.watchfilesreload import (

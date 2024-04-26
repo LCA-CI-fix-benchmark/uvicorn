@@ -122,16 +122,17 @@ class Server:
                 return fromshare(sock_data)
 
             self.servers: list[asyncio.base_events.Server] = []
-            for sock in sockets:
-                is_windows = platform.system() == "Windows"
-                if config.workers > 1 and is_windows:  # pragma: py-not-win32
-                    sock = _share_socket(sock)  # type: ignore[assignment]
-                server = await loop.create_server(
-                    create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog
-                )
-                self.servers.append(server)
-            listeners = sockets
+import platform
 
+for sock in sockets:
+    is_windows = platform.system() == "Windows"
+    if config.workers > 1 and is_windows:  # pragma: py-not-win32
+        sock = _share_socket(sock)  # type: ignore[assignment]
+    server = await loop.create_server(
+        create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog
+    )
+    self.servers.append(server)
+listeners = sockets
         elif config.fd is not None:  # pragma: py-win32
             # Use an existing socket, from a file descriptor.
             sock = socket.fromfd(config.fd, socket.AF_UNIX, socket.SOCK_STREAM)
@@ -285,14 +286,16 @@ class Server:
             logger.error(
                 "Cancel %s running task(s), timeout graceful shutdown exceeded",
                 len(self.server_state.tasks),
-            )
-            for t in self.server_state.tasks:
-                if sys.version_info < (3, 9):  # pragma: py-gte-39
-                    t.cancel()
-                else:  # pragma: py-lt-39
-                    t.cancel(msg="Task cancelled, timeout graceful shutdown exceeded")
+import sys
 
-        # Send the lifespan shutdown event, and wait for application shutdown.
+for t in self.server_state.tasks:
+    if sys.version_info < (3, 9):  # pragma: py-gte-39
+        t.cancel()
+    else:  # pragma: py-lt-39
+        t.cancel(msg="Task cancelled, timeout graceful shutdown exceeded")
+
+# Send the lifespan shutdown event, and wait for application shutdown.
+if not self.force_exit:
         if not self.force_exit:
             await self.lifespan.shutdown()
 
@@ -305,16 +308,19 @@ class Server:
                 await asyncio.sleep(0.1)
 
         # Wait for existing tasks to complete.
-        if self.server_state.tasks and not self.force_exit:
-            msg = "Waiting for background tasks to complete. (CTRL+C to force quit)"
-            logger.info(msg)
-            while self.server_state.tasks and not self.force_exit:
-                await asyncio.sleep(0.1)
+import asyncio
+import threading
 
-        for server in self.servers:
-            await server.wait_closed()
+while self.server_state.tasks and not self.force_exit:
+    await asyncio.sleep(0.1)
 
-    def install_signal_handlers(self) -> None:
+for server in self.servers:
+    await server.wait_closed()
+
+def install_signal_handlers(self) -> None:
+    if threading.current_thread() is not threading.main_thread():
+        # Signals can only be listened to from the main thread.
+        return
         if threading.current_thread() is not threading.main_thread():
             # Signals can only be listened to from the main thread.
             return

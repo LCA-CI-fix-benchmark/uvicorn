@@ -155,18 +155,18 @@ def resolve_reload_patterns(
     )
 
     children = []
-    for j in range(len(directories)):
-        for k in range(j + 1, len(directories)):
-            if directories[j] in directories[k].parents:
-                children.append(directories[k])  # pragma: py-darwin
-            elif directories[k] in directories[j].parents:
-                children.append(directories[j])
+from pathlib import Path
 
-    directories = list(set(directories).difference(set(children)))
+for j in range(len(directories)):
+    for k in range(j + 1, len(directories)):
+        if directories[j] in directories[k].parents:
+            children.append(directories[k])  # pragma: py-darwin
+        elif directories[k] in directories[j].parents:
+            children.append(directories[j])
 
-    return list(set(patterns)), directories
+directories = list(set(directories).difference(set(children)))
 
-
+return list(set(patterns)), directories
 def _normalize_dirs(dirs: list[str] | str | None) -> list[str]:
     if dirs is None:
         return []

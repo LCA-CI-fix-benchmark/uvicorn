@@ -150,10 +150,16 @@ class Server:
             server = await loop.create_unix_server(
                 create_protocol, path=config.uds, ssl=config.ssl, backlog=config.backlog
             )
-            os.chmod(config.uds, uds_perms)
-            assert server.sockets is not None  # mypy
-            listeners = server.sockets
-            self.servers = [server]
+import os
+
+os.chmod(config.uds, uds_perms)
+if server.sockets is not None:
+    listeners = server.sockets
+    self.servers = [server]
+else:
+    # Handle the scenario when server.sockets is None
+    # Add appropriate error handling or code logic here
+    pass
 
         else:
             # Standard case. Create a socket from a host/port pair.

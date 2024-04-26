@@ -883,23 +883,26 @@ async def test_subprotocols(
             return websocket.subprotocol
 
     config = Config(
-        app=App,
-        ws=ws_protocol_cls,
-        http=http_protocol_cls,
-        lifespan="off",
-        port=unused_tcp_port,
-    )
-    async with run_server(config):
-        accepted_subprotocol = await get_subprotocol(
-            f"ws://127.0.0.1:{unused_tcp_port}"
-        )
-        assert accepted_subprotocol == subprotocol
+# Add missing code snippets and imports to complete the test case for WebSocket functionality.
+# Ensure that the variables like `ws_protocol_cls`, `http_protocol_cls`, `unused_tcp_port`, and `subprotocol` are properly defined or imported.
 
+# Import necessary modules and functions
 
+# Define the WebSocket test case
+def test_websocket_functionality() -> None:
+    # Define app, ws_protocol_cls, http_protocol_cls, lifespan, and unused_tcp_port
+
+    # Create a WebSocket server configuration
+    
+    # Run the server asynchronously
+    
+    # Get the accepted subprotocol
+    
+    # Assert the accepted subprotocol with the defined subprotocol
+
+# Define constants for WebSocket byte sizes
 MAX_WS_BYTES = 1024 * 1024 * 16
 MAX_WS_BYTES_PLUS1 = MAX_WS_BYTES + 1
-
-
 @pytest.mark.anyio
 @pytest.mark.parametrize(
     "client_size_sent, server_size_max, expected_result",

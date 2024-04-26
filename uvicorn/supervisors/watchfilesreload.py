@@ -77,19 +77,9 @@ class WatchFilesReload(BaseReload):
             self.reload_dirs.append(Path.cwd())
 
         self.watch_filter = FileFilter(config)
-        self.watcher = watch(
-            *self.reload_dirs,
-            watch_filter=None,
-            stop_event=self.should_exit,
-            # using yield_on_timeout here mostly to make sure tests don't
-            # hang forever, won't affect the class's behavior
-            yield_on_timeout=True,
-        )
-
-    def should_restart(self) -> list[Path] | None:
-        self.pause()
-
         changes = next(self.watcher)
+        # Process the changes obtained from the watcher
+        # Implement the logic to handle the changes here
         if changes:
             unique_paths = {Path(c[1]) for c in changes}
             return [p for p in unique_paths if self.watch_filter(p)]

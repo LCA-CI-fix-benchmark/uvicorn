@@ -1,5 +1,5 @@
 import pytest
-
+import pytest
 from uvicorn.importer import ImportFromStringError, import_from_string
 
 
@@ -8,8 +8,6 @@ def test_invalid_format() -> None:
         import_from_string("example:")
     expected = 'Import string "example:" must be in format "<module>:<attribute>".'
     assert expected in str(exc_info.value)
-
-
 def test_invalid_module() -> None:
     with pytest.raises(ImportFromStringError) as exc_info:
         import_from_string("module_does_not_exist:myattr")

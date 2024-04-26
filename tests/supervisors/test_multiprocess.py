@@ -11,13 +11,12 @@ async def app(
     scope: "Scope", receive: "ASGIReceiveCallable", send: "ASGISendCallable"
 ) -> None:
     pass  # pragma: no cover
-
-
 def run(sockets: Optional[List[socket.socket]]) -> None:
     pass  # pragma: no cover
 
-
 def test_multiprocess_run() -> None:
+    """
+    Add test implementation here
     """
     A basic sanity check.
 

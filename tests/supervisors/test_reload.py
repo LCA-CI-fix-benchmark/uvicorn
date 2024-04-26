@@ -33,9 +33,6 @@ skip_if_m1 = pytest.mark.skipif(
 
 
 def run(sockets):
-    pass  # pragma: no cover
-
-
 class TestBaseReload:
     @pytest.fixture(autouse=True)
     def setup(
@@ -43,7 +40,7 @@ class TestBaseReload:
         reload_directory_structure: Path,
         reloader_class: Optional[Type[BaseReload]],
     ):
-        if reloader_class is None:  # pragma: no cover
+        if reloader_class is None:
             pytest.skip("Needed dependency not installed")
         self.reload_path = reload_directory_structure
         self.reloader_class = reloader_class

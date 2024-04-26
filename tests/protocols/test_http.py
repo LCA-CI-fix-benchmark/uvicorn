@@ -187,9 +187,13 @@ class MockLoop:
                 later.append((delay, callback, args))
         self._later = later
 
-
 class MockTask:
+    def __init__(self):
+        pass
+
     def add_done_callback(self, callback):
+        # Add implementation for add_done_callback here
+        pass
         pass
 
 

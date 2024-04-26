@@ -302,7 +302,6 @@ class Config:
             )
 
             reload_dirs_tmp = self.reload_dirs.copy()
-
             for directory in self.reload_dirs_excludes:
                 for reload_directory in reload_dirs_tmp:
                     if (

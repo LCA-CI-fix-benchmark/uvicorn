@@ -1,7 +1,5 @@
 from typing import Any, Dict
-
 from uvicorn import Config
-
 
 class LifespanOff:
     def __init__(self, config: Config) -> None:

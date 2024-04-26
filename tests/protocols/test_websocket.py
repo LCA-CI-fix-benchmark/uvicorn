@@ -1286,7 +1286,6 @@ async def test_server_reject_connection_with_missing_body(
             async with websockets.client.connect(url):
                 pass  # pragma: no cover
         assert exc_info.value.status_code == 404
-
     config = Config(
         app=app,
         ws=ws_protocol_cls,

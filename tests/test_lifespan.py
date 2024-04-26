@@ -41,16 +41,21 @@ def test_lifespan_on():
 
 
 def test_lifespan_off():
-    async def app(scope, receive, send):
-        pass  # pragma: no cover
+from uvicorn import Config
+from uvicorn.lifespan.off import LifespanOff
 
-    async def test():
-        config = Config(app=app, lifespan="off")
-        lifespan = LifespanOff(config)
+async def app(scope, receive, send):
+    # Add functionality for the app here
+    pass
 
-        await lifespan.startup()
-        await lifespan.shutdown()
+async def test_lifespan_off():
+    config = Config(app=app, lifespan="off")
+    lifespan = LifespanOff(config)
 
+    await lifespan.startup()
+    # Add assertions or checks here to test lifespan behavior
+    assert lifespan.should_exit is False
+    await lifespan.shutdown()
     loop = asyncio.new_event_loop()
     loop.run_until_complete(test())
     loop.close()

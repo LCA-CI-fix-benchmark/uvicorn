@@ -45,14 +45,14 @@ def build_environ(
 
     # Get server name and port - required in WSGI, not in ASGI
     server = scope.get("server")
-    if server is None:
+    if server is None or not isinstance(server, tuple) or len(server) != 2:
         server = ("localhost", 80)
     environ["SERVER_NAME"] = server[0]
     environ["SERVER_PORT"] = server[1]
 
     # Get client IP address
     client = scope.get("client")
-    if client is not None:
+    if isinstance(client, tuple) and client is not None:
         environ["REMOTE_ADDR"] = client[0]
 
     # Go through headers and make them into environ entries

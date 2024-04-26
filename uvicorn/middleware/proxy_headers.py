@@ -4,10 +4,9 @@ and is trusted to be properly setting the `X-Forwarded-Proto` and
 `X-Forwarded-For` headers with the connecting client information.
 
 Modifies the `client` and `scheme` information so that they reference
-the connecting client, rather that the connecting proxy.
+the connecting client, rather than the connecting proxy.
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers#Proxies
-"""
 from typing import List, Optional, Tuple, Union, cast
 
 from uvicorn._types import (

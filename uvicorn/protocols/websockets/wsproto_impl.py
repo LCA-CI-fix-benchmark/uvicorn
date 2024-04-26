@@ -115,8 +115,9 @@ class WSProtocol(asyncio.Protocol):
         try:
             self.conn.receive_data(data)
         except RemoteProtocolError as err:
-            # TODO: Remove `type: ignore` when wsproto fixes the type annotation.
-            self.transport.write(self.conn.send(err.event_hint))  # type: ignore[arg-type]  # noqa: E501
+            # Handle RemoteProtocolError and send event hint
+            # Note: `type: ignore` is temporary until wsproto fixes the type annotation.
+            self.transport.write(self.conn.send(err.event_hint))  # noqa: E501
             self.transport.close()
         else:
             self.handle_events()
@@ -161,14 +162,14 @@ class WSProtocol(asyncio.Protocol):
     # Event handlers
 
     def handle_connect(self, event: events.Request) -> None:
-        headers = [(b"host", event.host.encode())]
         headers += [(key.lower(), value) for key, value in event.extra_headers]
         raw_path, _, query_string = event.target.partition("?")
-        self.scope: "WebSocketScope" = {
+        self.scope: WebSocketScope = {
             "type": "websocket",
             "asgi": {"version": self.config.asgi_version, "spec_version": "2.3"},
             "http_version": "1.1",
             "scheme": self.scheme,
+            "server": self.server,
             "server": self.server,
             "client": self.client,
             "root_path": self.root_path,
@@ -292,12 +293,13 @@ class WSProtocol(asyncio.Protocol):
                 self.transport.close()
 
             elif message_type == "websocket.http.response.start":
-                message = typing.cast(WebSocketResponseStartEvent, message)
                 # ensure status code is in the valid range
                 if not (100 <= message["status"] < 600):
                     msg = "Invalid HTTP status code '%d' in response."
                     raise RuntimeError(msg % message["status"])
                 self.logger.info(
+                    '%s - "WebSocket %s" %d',
+                )
                     '%s - "WebSocket %s" %d',
                     self.scope["client"],
                     get_path_with_query_string(self.scope),

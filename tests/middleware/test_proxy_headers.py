@@ -41,6 +41,7 @@ async def app(
         # trusted proxy list
         (["127.0.0.1", "10.0.0.1"], "Remote: https://1.2.3.4:0"),
         ("127.0.0.1, 10.0.0.1", "Remote: https://1.2.3.4:0"),
+    ]
         # request from untrusted proxy
         ("192.168.0.1", "Remote: http://127.0.0.1:123"),
     ],

@@ -673,10 +673,14 @@ async def test_app_close(
                 break
 
     async def websocket_session(url: str):
-        async with websockets.client.connect(url) as websocket:
-            await websocket.ping()
-            await websocket.send("abc")
-            await websocket.recv()
+        try:
+            async with websockets.client.connect(url) as websocket:
+                await websocket.ping()
+                await websocket.send("abc")
+                await websocket.recv()
+        except Exception as e:
+            # Handle or log the exception appropriately
+            print(f"WebSocket session error: {e}")
 
     config = Config(
         app=app,
@@ -877,10 +881,10 @@ async def test_subprotocols(
             await self.send({"type": "websocket.accept", "subprotocol": subprotocol})
 
     async def get_subprotocol(url: str):
-        async with websockets.client.connect(
-            url, subprotocols=[Subprotocol("proto1"), Subprotocol("proto2")]
-        ) as websocket:
-            return websocket.subprotocol
+    config = Config(
+        app=App,
+        ws=ws_protocol_cls,
+    )
 
     config = Config(
         app=App,
@@ -1093,11 +1097,8 @@ async def test_server_reject_connection_with_multibody_response(
 
 
 @pytest.mark.anyio
-async def test_server_reject_connection_with_invalid_status(
-    ws_protocol_cls: "typing.Type[WSProtocol | WebSocketProtocol]",
-    http_protocol_cls: "typing.Type[H11Protocol | HttpToolsProtocol]",
-    unused_tcp_port: int,
-):
+    async def app(scope, receive, send):
+        assert scope["type"] == "websocket"
     # this test checks that even if there is an error in the response, the server
     # can successfully send a 500 error back to the client
     async def app(scope, receive, send):

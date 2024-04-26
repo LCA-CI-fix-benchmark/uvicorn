@@ -1,10 +1,7 @@
 """
-This middleware can be used when a known proxy is fronting the application,
-and is trusted to be properly setting the `X-Forwarded-Proto` and
-`X-Forwarded-For` headers with the connecting client information.
-
-Modifies the `client` and `scheme` information so that they reference
-the connecting client, rather that the connecting proxy.
+"""
+This middleware modifies the `client` and `scheme` information so that they reference
+the connecting client, rather than the connecting proxy.
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers#Proxies
 """
@@ -70,15 +67,12 @@ class ProxyHeadersMiddleware:
                         scope["scheme"] = x_forwarded_proto
 
                 if b"x-forwarded-for" in headers:
-                    # Determine the client address from the last trusted IP in the
-                    # X-Forwarded-For header. We've lost the connecting client's port
-                    # information by now, so only include the host.
+                if b"x-forwarded-for" in headers:
+                    # Decode the x_forwarded_for header using latin1 encoding
                     x_forwarded_for = headers[b"x-forwarded-for"].decode("latin1")
+                    # Split the x_forwarded_for header by comma and strip each item
                     x_forwarded_for_hosts = [
                         item.strip() for item in x_forwarded_for.split(",")
                     ]
-                    host = self.get_trusted_client_host(x_forwarded_for_hosts)
-                    port = 0
-                    scope["client"] = (host, port)  # type: ignore[arg-type]
 
         return await self.app(scope, receive, send)

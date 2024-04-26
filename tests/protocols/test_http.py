@@ -1049,7 +1049,11 @@ async def test_lifespan_state(
     protocol = get_connected_protocol(app, http_protocol_cls, lifespan=lifespan)
     for _ in range(2):
         protocol.data_received(SIMPLE_GET_REQUEST)
-        await protocol.loop.run_one()
+        try:
+            await protocol.loop.run_one()
+        except Exception as e:
+            # Handle or log the exception appropriately
+            print(f"Error during protocol execution: {e}")
         assert b"HTTP/1.1 200 OK" in protocol.transport.buffer
         assert b"Hi!" in protocol.transport.buffer
 

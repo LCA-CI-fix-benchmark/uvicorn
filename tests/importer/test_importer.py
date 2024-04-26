@@ -1,7 +1,7 @@
 import pytest
+import pytest
 
 from uvicorn.importer import ImportFromStringError, import_from_string
-
 
 def test_invalid_format() -> None:
     with pytest.raises(ImportFromStringError) as exc_info:

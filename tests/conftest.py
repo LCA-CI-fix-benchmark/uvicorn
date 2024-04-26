@@ -110,6 +110,7 @@ def tls_ca_ssl_context(tls_certificate_authority: "trustme.CA") -> ssl.SSLContex
 def reload_directory_structure(tmp_path_factory: pytest.TempPathFactory):
     """
     This fixture creates a directory structure to enable reload parameter tests
+    """
 
     The fixture has the following structure:
     root

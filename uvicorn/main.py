@@ -338,25 +338,11 @@ def print_version(ctx: click.Context, param: click.Parameter, value: bool) -> No
     help="Specify custom default HTTP response headers as a Name:Value pair",
 )
 @click.option(
-    "--version",
-    is_flag=True,
-    callback=print_version,
-    expose_value=False,
-    is_eager=True,
-    help="Display the uvicorn version and exit.",
-)
-@click.option(
-    "--app-dir",
-    default="",
-    show_default=True,
-    help="Look for APP in the specified directory, by adding this to the PYTHONPATH."
-    " Defaults to the current working directory.",
-)
-@click.option(
     "--h11-max-incomplete-event-size",
     "h11_max_incomplete_event_size",
     type=int,
     default=None,
+)
     help="For h11, the maximum number of bytes to buffer of an incomplete event.",
 )
 @click.option(

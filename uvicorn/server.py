@@ -143,6 +143,8 @@ class Server:
             self.servers = [server]
 
         elif config.uds is not None:  # pragma: py-win32
+import os
+
             # Create a socket using UNIX domain socket.
             uds_perms = 0o666
             if os.path.exists(config.uds):

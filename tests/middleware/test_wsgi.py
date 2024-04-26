@@ -2,6 +2,8 @@ import io
 import sys
 from typing import AsyncGenerator, Callable, List
 
+import aiohttp
+import aiohttp.web
 import a2wsgi
 import httpx
 import pytest

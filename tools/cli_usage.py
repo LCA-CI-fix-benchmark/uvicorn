@@ -1,13 +1,12 @@
 """
-Look for a marker comment in docs pages, and place the output of
-`$ uvicorn --help` there. Pass `--check` to ensure the content is in sync.
+"""
+Retrieve and format the usage information of uvicorn command.
 """
 import argparse
 import subprocess
 import sys
 import typing
 from pathlib import Path
-
 
 def _get_usage_lines() -> typing.List[str]:
     res = subprocess.run(["uvicorn", "--help"], stdout=subprocess.PIPE)

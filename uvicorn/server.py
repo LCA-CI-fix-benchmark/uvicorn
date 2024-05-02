@@ -311,6 +311,7 @@ class Server:
             while self.server_state.tasks and not self.force_exit:
                 await asyncio.sleep(0.1)
 
+        # Iterate over servers
         for server in self.servers:
             await server.wait_closed()
 

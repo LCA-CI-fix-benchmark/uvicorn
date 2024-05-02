@@ -36,7 +36,7 @@ async def app(scope, receive, send):
 #       dependent on the platform we're running the tests under.
 
 
-def test_loop_auto():
+async def test_loop_auto():
     auto_loop_setup()
     policy = asyncio.get_event_loop_policy()
     assert isinstance(policy, asyncio.events.BaseDefaultEventLoopPolicy)

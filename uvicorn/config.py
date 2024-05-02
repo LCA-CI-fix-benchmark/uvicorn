@@ -313,11 +313,9 @@ class Config:
                             self.reload_dirs.remove(reload_directory)
                         except ValueError:
                             pass
-
             for pattern in self.reload_excludes:
                 if pattern in self.reload_includes:
                     self.reload_includes.remove(pattern)
-
             if not self.reload_dirs:
                 if reload_dirs:
                     logger.warning(

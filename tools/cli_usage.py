@@ -15,16 +15,17 @@ def _get_usage_lines() -> typing.List[str]:
     return ["```", "$ uvicorn --help", *help_text.splitlines(), "```"]
 
 
+import typing
+
 def _find_next_codefence_lineno(lines: typing.List[str], after: int) -> int:
     return next(
         lineno for lineno, line in enumerate(lines[after:], after) if line == "```"
     )
 
-
 def _get_insert_location(lines: typing.List[str]) -> typing.Tuple[int, int]:
     marker = lines.index("<!-- :cli_usage: -->")
     start = marker + 1
-
+    return start, start + 1
     if lines[start] == "```":
         # Already generated.
         # <!-- :cli_usage: -->
@@ -37,8 +38,7 @@ def _get_insert_location(lines: typing.List[str]) -> typing.Tuple[int, int]:
         # Not generated yet.
         end = start
 
-    return start, end
-
+from pathlib import Path
 
 def _generate_cli_usage(path: Path, check: bool = False) -> int:
     content = path.read_text()
@@ -55,6 +55,7 @@ def _generate_cli_usage(path: Path, check: bool = False) -> int:
         print(f"ERROR: CLI usage in {path} is out of sync. Run scripts/lint to fix.")
         return 1
 
+    path.write_text(output)
     path.write_text(output)
     return 0
 

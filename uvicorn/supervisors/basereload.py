@@ -109,14 +109,13 @@ class BaseReload:
 
         for sock in self.sockets:
             sock.close()
-
         message = "Stopping reloader process [{}]".format(str(self.pid))
         color_message = "Stopping reloader process [{}]".format(
             click.style(str(self.pid), fg="cyan", bold=True)
         )
         logger.info(message, extra={"color_message": color_message})
 
-    def should_restart(self) -> list[Path] | None:
+    def should_restart(self) -> list[Path]:
         raise NotImplementedError("Reload strategies should override should_restart()")
 
 

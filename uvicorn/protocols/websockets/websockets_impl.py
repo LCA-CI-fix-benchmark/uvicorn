@@ -180,7 +180,6 @@ class WebSocketProtocol(WebSocketServerProtocol):
         subprotocols = []
         for header in headers.get_all("Sec-WebSocket-Protocol"):
             subprotocols.extend([token.strip() for token in header.split(",")])
-
         asgi_headers = [
             (name.encode("ascii"), value.encode("ascii", errors="surrogateescape"))
             for name, value in headers.raw_items()

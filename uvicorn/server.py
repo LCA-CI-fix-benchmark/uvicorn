@@ -122,6 +122,10 @@ class Server:
                 return fromshare(sock_data)
 
             self.servers: list[asyncio.base_events.Server] = []
+import platform
+import socket
+import os
+
             for sock in sockets:
                 is_windows = platform.system() == "Windows"
                 if config.workers > 1 and is_windows:  # pragma: py-not-win32
@@ -154,14 +158,15 @@ class Server:
             assert server.sockets is not None  # mypy
             listeners = server.sockets
             self.servers = [server]
-
         else:
             # Standard case. Create a socket from a host/port pair.
             try:
                 server = await loop.create_server(
-                    create_protocol,
-                    host=config.host,
-                    port=config.port,
+import logger
+import sys
+import socket
+from typing import Sequence
+
                     ssl=config.ssl,
                     backlog=config.backlog,
                 )
@@ -191,16 +196,18 @@ class Server:
             logger.info(
                 "Uvicorn running on socket %s (Press CTRL+C to quit)",
                 sock.getsockname(),
+            logger.info(
+                "Uvicorn running on socket %s (Press CTRL+C to quit)",
+                sock.getsockname(),
             )
 
         elif config.uds is not None:  # pragma: py-win32
-            logger.info(
-                "Uvicorn running on unix socket %s (Press CTRL+C to quit)", config.uds
-            )
+                # It's an IPv6 address.
+                addr_format = "%s://[%s]:%d"
 
-        else:
-            addr_format = "%s://%s:%d"
-            host = "0.0.0.0" if config.host is None else config.host
+            port = config.port
+            if port == 0:
+                port = listeners[0].getsockname()[1]
             if ":" in host:
                 # It's an IPv6 address.
                 addr_format = "%s://[%s]:%d"
@@ -219,20 +226,13 @@ class Server:
             logger.info(
                 message,
                 protocol_name,
-                host,
-                port,
-                extra={"color_message": color_message},
-            )
-
-    async def main_loop(self) -> None:
-        counter = 0
         should_exit = await self.on_tick(counter)
         while not should_exit:
             counter += 1
             counter = counter % 864000
             await asyncio.sleep(0.1)
             should_exit = await self.on_tick(counter)
-
+        should_exit = await self.on_tick(counter)
     async def on_tick(self, counter: int) -> bool:
         # Update the default headers, once per second.
         if counter % 10 == 0:
@@ -243,6 +243,12 @@ class Server:
                 date_header = [(b"date", current_date)]
             else:
                 date_header = []
+
+            self.server_state.default_headers = (
+                date_header + self.config.encoded_headers
+            )
+
+            # Callback to `callback_notify` once every `timeout_notify` seconds.
 
             self.server_state.default_headers = (
                 date_header + self.config.encoded_headers

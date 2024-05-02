@@ -169,6 +169,9 @@ class WebSocketProtocol(WebSocketServerProtocol):
         This hook is called to determine if the websocket should return
         an HTTP response and close.
 
+import websockets
+from typing import List
+
         Our behavior here is to start the ASGI application, and then wait
         for either `accept` or `close` in order to determine if we should
         close the connection.
@@ -177,10 +180,9 @@ class WebSocketProtocol(WebSocketServerProtocol):
 
         websockets.legacy.handshake.check_request(headers)
 
-        subprotocols = []
+        subprotocols: List[str] = []
         for header in headers.get_all("Sec-WebSocket-Protocol"):
             subprotocols.extend([token.strip() for token in header.split(",")])
-
         asgi_headers = [
             (name.encode("ascii"), value.encode("ascii", errors="surrogateescape"))
             for name, value in headers.raw_items()

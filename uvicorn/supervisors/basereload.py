@@ -97,6 +97,8 @@ class BaseReload:
 
         self.process = get_subprocess(
             config=self.config, target=self.target, sockets=self.sockets
+import sys
+
         )
         self.process.start()
 

@@ -81,12 +81,10 @@ class WatchFilesReload(BaseReload):
             *self.reload_dirs,
             watch_filter=None,
             stop_event=self.should_exit,
-            # using yield_on_timeout here mostly to make sure tests don't
-            # hang forever, won't affect the class's behavior
-            yield_on_timeout=True,
+            yield_on_timeout=True
         )
 
-    def should_restart(self) -> list[Path] | None:
+    def should_restart(self) -> list[Path]:
         self.pause()
 
         changes = next(self.watcher)

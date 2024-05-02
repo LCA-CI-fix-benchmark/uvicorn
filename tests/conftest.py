@@ -114,19 +114,19 @@ def reload_directory_structure(tmp_path_factory: pytest.TempPathFactory):
     The fixture has the following structure:
     root
     ├── [app, app_first, app_second, app_third]
-    │   ├── css
-    │   │   └── main.css
-    │   ├── js
-    │   │   └── main.js
-    │   ├── src
-    │   │   └── main.py
-    │   └── sub
-    │       └── sub.py
+    │   ├── css
+    │   │   └── main.css
+    │   ├── js
+    │   │   └── main.js
+    │   ├── src
+    │   │   └── main.py
+    │   └── sub
+    │       └── sub.py
     ├── ext
-    │   └── ext.jpg
+    │   └── ext.jpg
     ├── .dotted
     ├── .dotted_dir
-    │   └── file.txt
+    │   └── file.txt
     └── main.py
     """
     root = tmp_path_factory.mktemp("reload_directory")
@@ -137,7 +137,6 @@ def reload_directory_structure(tmp_path_factory: pytest.TempPathFactory):
 
     dotted_file = root / ".dotted"
     dotted_file.touch()
-
     dotted_dir = root / ".dotted_dir"
     dotted_dir.mkdir()
     dotted_dir_file = dotted_dir / "file.txt"
@@ -237,13 +236,15 @@ def _unused_port(socket_type: int) -> int:
     with contextlib.closing(socket.socket(type=socket_type)) as sock:
         sock.bind(("127.0.0.1", 0))
         return sock.getsockname()[1]
+        return sock.getsockname()[1]
 
 
 # This was copied from pytest-asyncio.
 # Ref.: https://github.com/pytest-dev/pytest-asyncio/blob/25d9592286682bc6dbfbf291028ff7a9594cf283/pytest_asyncio/plugin.py#L525-L527  # noqa: E501
 @pytest.fixture
 def unused_tcp_port() -> int:
-    return _unused_port(socket.SOCK_STREAM)
+    # Implement the logic to return an unused TCP port number here
+    return sock.getsockname()[1]
 
 
 @pytest.fixture(

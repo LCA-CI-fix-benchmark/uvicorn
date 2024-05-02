@@ -86,7 +86,7 @@ class WatchFilesReload(BaseReload):
             yield_on_timeout=True,
         )
 
-    def should_restart(self) -> list[Path] | None:
+    def should_restart(self) -> Optional[List[Path]]:
         self.pause()
 
         changes = next(self.watcher)

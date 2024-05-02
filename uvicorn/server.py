@@ -114,11 +114,19 @@ class Server:
             def _share_socket(
                 sock: socket.SocketType,
             ) -> socket.SocketType:  # pragma py-linux pragma: py-darwin
-                # Windows requires the socket be explicitly shared across
-                # multiple workers (processes).
-                from socket import fromshare  # type: ignore[attr-defined]
+                if platform.system() == 'Windows':
+                    # Windows requires the socket be explicitly shared across
+                    # multiple workers (processes).
+                    from socket import fromshare  # type: ignore[attr-defined]
 
-                sock_data = sock.share(os.getpid())  # type: ignore[attr-defined]
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                        s.bind(('127.0.0.1', 0))
+                        s.listen()
+                        s.set_inheritable(True)
+                        sock_data = s.share(os.getpid())  # type: ignore[attr-defined]
+                else:
+                    sock_data = sock.share(os.getpid())  # type: ignore[attr-defined]
                 return fromshare(sock_data)
 
             self.servers: list[asyncio.base_events.Server] = []

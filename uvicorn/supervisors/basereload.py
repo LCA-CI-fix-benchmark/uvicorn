@@ -103,9 +103,10 @@ class BaseReload:
     def shutdown(self) -> None:
         if sys.platform == "win32":
             self.should_exit.set()  # pragma: py-not-win32
+            self.process.join()
         else:
             self.process.terminate()  # pragma: py-win32
-        self.process.join()
+            self.process.join()
 
         for sock in self.sockets:
             sock.close()

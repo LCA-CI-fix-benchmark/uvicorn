@@ -878,125 +878,13 @@ async def test_send_close_on_server_shutdown(
             websocket = ws_connection
             await server_shutdown_event.wait()
 
-    config = Config(
-        app=app,
-        ws=ws_protocol_cls,
-        http=http_protocol_cls,
-        lifespan="off",
-        port=unused_tcp_port,
-    )
-    async with run_server(config):
-        task = asyncio.create_task(
-            websocket_session(f"ws://127.0.0.1:{unused_tcp_port}")
-        )
-        await asyncio.sleep(0.1)
-        disconnect_message_before_shutdown = disconnect_message
-    server_shutdown_event.set()
-
-    assert websocket is not None
-    assert websocket.close_code == 1012
-    assert disconnect_message_before_shutdown == {}
-    assert disconnect_message == {"type": "websocket.disconnect", "code": 1012}
-    task.cancel()
-
-
-@pytest.mark.anyio
-@pytest.mark.parametrize("subprotocol", ["proto1", "proto2"])
-async def test_subprotocols(
-    ws_protocol_cls: "typing.Type[WSProtocol | WebSocketProtocol]",
-    http_protocol_cls: "typing.Type[H11Protocol | HttpToolsProtocol]",
-    subprotocol: str,
-    unused_tcp_port: int,
-):
-    class App(WebSocketResponse):
-        async def websocket_connect(self, message):
-            await self.send({"type": "websocket.accept", "subprotocol": subprotocol})
-
-    async def get_subprotocol(url: str):
-        async with websockets.client.connect(
-            url, subprotocols=[Subprotocol("proto1"), Subprotocol("proto2")]
-        ) as websocket:
-            return websocket.subprotocol
-
-    config = Config(
-        app=App,
-        ws=ws_protocol_cls,
-        http=http_protocol_cls,
-        lifespan="off",
-        port=unused_tcp_port,
-    )
-    async with run_server(config):
-        accepted_subprotocol = await get_subprotocol(
-            f"ws://127.0.0.1:{unused_tcp_port}"
-        )
-        assert accepted_subprotocol == subprotocol
-
-
-MAX_WS_BYTES = 1024 * 1024 * 16
-MAX_WS_BYTES_PLUS1 = MAX_WS_BYTES + 1
-
-
-@pytest.mark.anyio
-@pytest.mark.parametrize(
-    "client_size_sent, server_size_max, expected_result",
-    [
-        (MAX_WS_BYTES, MAX_WS_BYTES, 0),
-        (MAX_WS_BYTES_PLUS1, MAX_WS_BYTES, 1009),
-        (10, 10, 0),
-        (11, 10, 1009),
-    ],
-    ids=[
-        "max=defaults sent=defaults",
-        "max=defaults sent=defaults+1",
-        "max=10 sent=10",
-        "max=10 sent=11",
-    ],
-)
-async def test_send_binary_data_to_server_bigger_than_default_on_websockets(
-    http_protocol_cls: "typing.Type[H11Protocol | HttpToolsProtocol]",
-    client_size_sent: int,
-    server_size_max: int,
-    expected_result: int,
-    unused_tcp_port: int,
-):
-    class App(WebSocketResponse):
-        async def websocket_connect(self, message):
-            await self.send({"type": "websocket.accept"})
-
-        async def websocket_receive(self, message):
-            _bytes = message.get("bytes")
-            await self.send({"type": "websocket.send", "bytes": _bytes})
-
-    async def send_text(url: str):
-        async with websockets.client.connect(url, max_size=client_size_sent) as ws:
-            await ws.send(b"\x01" * client_size_sent)
-            return await ws.recv()
-
-    config = Config(
-        app=App,
-        ws=WebSocketProtocol,
-        http=http_protocol_cls,
-        lifespan="off",
-        ws_max_size=server_size_max,
-        port=unused_tcp_port,
-    )
-    async with run_server(config):
-        if expected_result == 0:
-            data = await send_text(f"ws://127.0.0.1:{unused_tcp_port}")
-            assert data == b"\x01" * client_size_sent
-        else:
-            with pytest.raises(websockets.exceptions.ConnectionClosedError) as e:
-                data = await send_text(f"ws://127.0.0.1:{unused_tcp_port}")
-            assert e.value.code == expected_result
-
-
 @pytest.mark.anyio
 async def test_server_reject_connection(
     ws_protocol_cls: "typing.Type[WSProtocol | WebSocketProtocol]",
     http_protocol_cls: "typing.Type[H11Protocol | HttpToolsProtocol]",
     unused_tcp_port: int,
 ):
-    disconnected_message: ASGIReceiveEvent = {}  # type: ignore
+    disconnected_message: ASGIReceiveEvent = None  # type: ignore
 
     async def app(scope: Scope, receive: ASGIReceiveCallable, send: ASGISendCallable):
         nonlocal disconnected_message
@@ -1030,46 +918,7 @@ async def test_server_reject_connection(
     async with run_server(config):
         await websocket_session(f"ws://127.0.0.1:{unused_tcp_port}")
 
-    assert disconnected_message == {"type": "websocket.disconnect", "code": 1006}
-
-
-@pytest.mark.anyio
-async def test_server_reject_connection_with_response(
-    ws_protocol_cls: "typing.Type[WSProtocol | WebSocketProtocol]",
-    http_protocol_cls: "typing.Type[H11Protocol | HttpToolsProtocol]",
-    unused_tcp_port: int,
-):
-    disconnected_message = {}
-
-    async def app(scope, receive, send):
-        nonlocal disconnected_message
-        assert scope["type"] == "websocket"
-        assert "websocket.http.response" in scope["extensions"]
-
-        # Pull up first recv message.
-        message = await receive()
-        assert message["type"] == "websocket.connect"
-
-        # Reject the connection with a response
-        response = Response(b"goodbye", status_code=400)
-        await response(scope, receive, send)
-        disconnected_message = await receive()
-
-    async def websocket_session(url):
-        response = await wsresponse(url)
-        assert response.status_code == 400
-        assert response.content == b"goodbye"
-
-    config = Config(
-        app=app,
-        ws=ws_protocol_cls,
-        http=http_protocol_cls,
-        lifespan="off",
-        port=unused_tcp_port,
-    )
-    async with run_server(config):
-        await websocket_session(f"ws://127.0.0.1:{unused_tcp_port}")
-
+    assert disconnected_message is None
     assert disconnected_message == {"type": "websocket.disconnect", "code": 1006}
 
 

@@ -361,6 +361,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     )
                     raise RuntimeError(msg % message_type)
             except ConnectionClosed as exc:
+                # Handle the ConnectionClosed exception here
                 raise Disconnected from exc
 
         elif self.initial_response is not None:

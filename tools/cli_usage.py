@@ -54,7 +54,8 @@ def _generate_cli_usage(path: Path, check: bool = False) -> int:
             return 0
         print(f"ERROR: CLI usage in {path} is out of sync. Run scripts/lint to fix.")
         return 1
-
+    
+    return output  # Ensure the output is returned at the end of the function
     path.write_text(output)
     return 0
 

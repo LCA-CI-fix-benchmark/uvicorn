@@ -104,13 +104,14 @@ def tls_ca_ssl_context(tls_certificate_authority: "trustme.CA") -> ssl.SSLContex
     ssl_ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     tls_certificate_authority.configure_trust(ssl_ctx)
     return ssl_ctx
-
+import pytest
 
 @pytest.fixture(scope="package")
 def reload_directory_structure(tmp_path_factory: pytest.TempPathFactory):
     """
     This fixture creates a directory structure to enable reload parameter tests
-
+    """
+    # Implement the logic to create the directory structure here
     The fixture has the following structure:
     root
     ├── [app, app_first, app_second, app_third]

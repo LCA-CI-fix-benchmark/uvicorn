@@ -6,7 +6,7 @@ import a2wsgi
 import httpx
 import pytest
 
-from uvicorn._types import Environ, HTTPRequestEvent, HTTPScope, StartResponse
+from uvicorn.types import Environ, HTTPRequestEvent, HTTPScope, StartResponse
 from uvicorn.middleware import wsgi
 
 

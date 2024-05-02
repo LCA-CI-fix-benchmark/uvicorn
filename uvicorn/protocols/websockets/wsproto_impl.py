@@ -296,6 +296,8 @@ class WSProtocol(asyncio.Protocol):
                 # ensure status code is in the valid range
                 if not (100 <= message["status"] < 600):
                     msg = "Invalid HTTP status code '%d' in response."
+                    # Add logging or error handling for the invalid status code
+                    self.logger.error(msg % message["status"])
                     raise RuntimeError(msg % message["status"])
                 self.logger.info(
                     '%s - "WebSocket %s" %d',

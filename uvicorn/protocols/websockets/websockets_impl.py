@@ -253,6 +253,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
             self.closed_event.set()
             msg = "Exception in ASGI application\n"
             self.logger.error(msg, exc_info=exc)
+            # Add additional error handling or actions as needed
             if not self.handshake_started_event.is_set():
                 self.send_500_response()
             else:

@@ -1024,11 +1024,12 @@ async def test_iterator_headers(
     await protocol.loop.run_one()
     assert b"x-test-header: test value" in protocol.transport.buffer
 
-
 @pytest.mark.anyio
 async def test_lifespan_state(
     http_protocol_cls: "Type[HttpToolsProtocol | H11Protocol]",
 ):
+    # Add the test logic for testing lifespan state
+    pass  # Placeholder for test implementation
     expected_states = [{"a": 123, "b": [1]}, {"a": 123, "b": [1, 2]}]
 
     async def app(scope: Scope, receive: ASGIReceiveCallable, send: ASGISendCallable):
@@ -1041,7 +1042,6 @@ async def test_lifespan_state(
         scope["state"]["b"].append(2)
         return await Response("Hi!")(scope, receive, send)
 
-    lifespan = LifespanOn(config=Config(app=app))
     # skip over actually running the lifespan, that is tested
     # in the lifespan tests
     lifespan.state.update({"a": 123, "b": [1]})
@@ -1051,6 +1051,7 @@ async def test_lifespan_state(
         protocol.data_received(SIMPLE_GET_REQUEST)
         await protocol.loop.run_one()
         assert b"HTTP/1.1 200 OK" in protocol.transport.buffer
+        assert b"Hi!" in protocol.transport.buffer
         assert b"Hi!" in protocol.transport.buffer
 
     assert not expected_states  # consumed

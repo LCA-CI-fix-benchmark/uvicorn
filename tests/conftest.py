@@ -114,19 +114,19 @@ def reload_directory_structure(tmp_path_factory: pytest.TempPathFactory):
     The fixture has the following structure:
     root
     ├── [app, app_first, app_second, app_third]
-    │   ├── css
-    │   │   └── main.css
-    │   ├── js
-    │   │   └── main.js
-    │   ├── src
-    │   │   └── main.py
-    │   └── sub
-    │       └── sub.py
+    │   ├── css
+    │   │   └── main.css
+    │   ├── js
+    │   │   └── main.js
+    │   ├── src
+    │   │   └── main.py
+    │   └── sub
+    │       └── sub.py
     ├── ext
-    │   └── ext.jpg
+    │   └── ext.jpg
     ├── .dotted
     ├── .dotted_dir
-    │   └── file.txt
+    │   └── file.txt
     └── main.py
     """
     root = tmp_path_factory.mktemp("reload_directory")
@@ -234,6 +234,10 @@ def touch_soon():
 
 def _unused_port(socket_type: int) -> int:
     """Find an unused localhost port from 1024-65535 and return it."""
+    import contextlib
+    import socket
+    
+    socket_type = socket.SOCK_STREAM  # Define the socket type
     with contextlib.closing(socket.socket(type=socket_type)) as sock:
         sock.bind(("127.0.0.1", 0))
         return sock.getsockname()[1]

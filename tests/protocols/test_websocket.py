@@ -1092,15 +1092,21 @@ async def test_server_reject_connection_with_multibody_response(
     assert disconnected_message == {"type": "websocket.disconnect", "code": 1006}
 
 
+import pytest
+import typing
+from my_module import WSProtocol, WebSocketProtocol, H11Protocol, HttpToolsProtocol
+from typing import Union
+
 @pytest.mark.anyio
 async def test_server_reject_connection_with_invalid_status(
-    ws_protocol_cls: "typing.Type[WSProtocol | WebSocketProtocol]",
-    http_protocol_cls: "typing.Type[H11Protocol | HttpToolsProtocol]",
+    ws_protocol_cls: Union[WSProtocol, WebSocketProtocol],
+    http_protocol_cls: Union[H11Protocol, HttpToolsProtocol],
     unused_tcp_port: int,
 ):
     # this test checks that even if there is an error in the response, the server
     # can successfully send a 500 error back to the client
     async def app(scope, receive, send):
+        # Add your test logic here
         assert scope["type"] == "websocket"
         assert "websocket.http.response" in scope["extensions"]
 

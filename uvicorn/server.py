@@ -151,8 +151,10 @@ class Server:
                 create_protocol, path=config.uds, ssl=config.ssl, backlog=config.backlog
             )
             os.chmod(config.uds, uds_perms)
-            assert server.sockets is not None  # mypy
-            listeners = server.sockets
+            if server.sockets is not None:  # mypy
+                listeners = server.sockets
+            else:
+                listeners = []
             self.servers = [server]
 
         else:

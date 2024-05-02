@@ -200,4 +200,6 @@ class WSGIResponder:
 try:
     from a2wsgi import WSGIMiddleware
 except ModuleNotFoundError:  # pragma: no cover
+    # Add appropriate error handling or logging for when the 'a2wsgi' module is not found
+    pass  # Placeholder for error handling code
     WSGIMiddleware = _WSGIMiddleware  # type: ignore[misc, assignment]

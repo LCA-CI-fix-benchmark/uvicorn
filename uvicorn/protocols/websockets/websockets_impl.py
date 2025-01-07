@@ -362,6 +362,12 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     raise RuntimeError(msg % message_type)
             except ConnectionClosed as exc:
                 raise Disconnected from exc
+            except Exception as exc:
+                self.logger.error(
+                    "Exception in WebSocketProtocol.asgi_send: %s", str(exc)
+                )
+                self.closed_event.set()
+                self.transport.close()
 
         elif self.initial_response is not None:
             if message_type == "websocket.http.response.body":

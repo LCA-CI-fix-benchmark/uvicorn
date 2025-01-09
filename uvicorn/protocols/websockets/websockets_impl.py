@@ -165,6 +165,15 @@ class WebSocketProtocol(WebSocketServerProtocol):
     async def process_request(
         self, path: str, headers: Headers
     ) -> Optional[HTTPResponse]:
+        # Reject requests with a body but no Content-Length header
+        if headers.get("Content-Length") is None and headers.get("Transfer-Encoding") is None:
+            error_message = b"Content-Length or Transfer-Encoding header required"
+            return (
+                http.HTTPStatus.BAD_REQUEST,
+                [("Content-Type", "text/plain; charset=utf-8")],
+                error_message,
+            )
+
         """
         This hook is called to determine if the websocket should return
         an HTTP response and close.

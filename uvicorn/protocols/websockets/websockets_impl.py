@@ -252,21 +252,24 @@ class WebSocketProtocol(WebSocketServerProtocol):
         termination states.
         """
         try:
-            result = await self.app(self.scope, self.asgi_receive, self.asgi_send)
-        except Disconnected:
+            try:
+                result = await self.app(self.scope, self.asgi_receive, self.asgi_send)
+            except Disconnected:
+                # After the handshake, the ASGI app can terminate cleanly
+                # by raising a Disconnected exception
+                pass
+            except Exception as exc:
+                if not self.handshake_started_event.is_set():
+                    msg = "Exception in ASGI application\n"
+                    self.logger.error(msg, exc_info=exc)
+                    self.send_500_response()
+                else: # Send websocket.close if handshake has started
+                    await self.asgi_send({"type": "websocket.close"})
+                    self.closed_event.set()
+                raise
+        finally: # Always ensure the connection gets closed
             self.closed_event.set()
             self.transport.close()
-        except BaseException as exc:
-            self.closed_event.set()
-            msg = "Exception in ASGI application\n"
-            self.logger.error(msg, exc_info=exc)
-            if not self.handshake_started_event.is_set():
-                self.send_500_response()
-            else:
-                await self.handshake_completed_event.wait()
-            self.transport.close()
-        else:
-            self.closed_event.set()
             if not self.handshake_started_event.is_set():
                 msg = "ASGI callable returned without sending handshake."
                 self.logger.error(msg)
@@ -275,7 +278,6 @@ class WebSocketProtocol(WebSocketServerProtocol):
                 msg = "ASGI callable should return None, but returned '%s'."
                 self.logger.error(msg, result)
                 await self.handshake_completed_event.wait()
-            self.transport.close()
 
     async def asgi_send(self, message: "ASGISendEvent") -> None:
         message_type = message["type"]

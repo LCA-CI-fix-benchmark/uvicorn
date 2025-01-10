@@ -223,7 +223,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
     def send_500_response(self) -> None:
         msg = b"Internal Server Error"
         content = [
-            b"HTTP/1.1 500 Internal Server Error\r\n"
+            b"HTTP/1.1 500 Internal Server Error\r\n",
+            b"server: uvicorn\r\n",
             b"content-type: text/plain; charset=utf-8\r\n",
             b"content-length: " + str(len(msg)).encode("ascii") + b"\r\n",
             b"connection: close\r\n",

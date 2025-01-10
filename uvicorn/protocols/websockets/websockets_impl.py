@@ -18,6 +18,7 @@ from urllib.parse import unquote
 import websockets
 from websockets.datastructures import Headers
 from websockets.exceptions import ConnectionClosed
+from websockets.http import read_request
 from websockets.extensions.permessage_deflate import ServerPerMessageDeflateFactory
 from websockets.legacy.server import HTTPResponse
 from websockets.server import WebSocketServerProtocol

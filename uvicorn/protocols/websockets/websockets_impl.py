@@ -369,6 +369,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
                 body = self.initial_response[2] + message["body"]
                 self.initial_response = self.initial_response[:2] + (body,)
                 if not message.get("more_body", False):
+                    if self.initial_response[0] != http.HTTPStatus.SWITCHING_PROTOCOLS:
+                        await self.asgi_send({"type": "websocket.close"})
                     self.closed_event.set()
             else:
                 msg = (

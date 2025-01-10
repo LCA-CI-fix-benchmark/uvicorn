@@ -230,6 +230,12 @@ class WebSocketProtocol(WebSocketServerProtocol):
             b"\r\n",
             msg,
         ]
+        self.initial_response = (
+            http.HTTPStatus.INTERNAL_SERVER_ERROR,
+            [('Content-Type', 'text/plain; charset=utf-8')],
+            msg
+        )
+        self.handshake_started_event.set()
         self.transport.write(b"".join(content))
         # Allow handler task to terminate cleanly, as websockets doesn't cancel it by
         # itself (see https://github.com/encode/uvicorn/issues/920)

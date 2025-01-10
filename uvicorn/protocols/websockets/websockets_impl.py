@@ -120,6 +120,12 @@ class WebSocketProtocol(WebSocketServerProtocol):
             (name.decode("latin-1"), value.decode("latin-1"))
             for name, value in server_state.default_headers
         ]
+        self.MAX_ATTEMPTS = 3
+
+    async def process_request(
+        self, path: str, headers: Headers
+    ) -> Optional[HTTPResponse]:
+        self.attempt_count += 1
 
     def connection_made(  # type: ignore[override]
         self, transport: asyncio.Transport
@@ -135,6 +141,14 @@ class WebSocketProtocol(WebSocketServerProtocol):
             self.logger.log(TRACE_LOG_LEVEL, "%sWebSocket connection made", prefix)
 
         super().connection_made(transport)
+
+    async def process_request(
+        self, path: str, headers: Headers
+    ) -> Optional[HTTPResponse]:
+        if self.attempt_count > self.MAX_ATTEMPTS:
+            self.logger.error("Maximum number of attempts reached. Closing connection.")
+            return HTTPResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR, reason="Maximum number of attempts reached")
+        return await super().process_request(path, headers)
 
     def connection_lost(self, exc: Optional[Exception]) -> None:
         self.connections.remove(self)

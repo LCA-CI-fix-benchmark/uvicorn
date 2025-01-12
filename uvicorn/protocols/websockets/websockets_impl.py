@@ -175,6 +175,13 @@ class WebSocketProtocol(WebSocketServerProtocol):
         """
         path_portion, _, query_string = path.partition("?")
 
+        # Reject WebSocket connections with body but no Content-Length
+        if (
+            headers.get("Transfer-Encoding") or
+            (headers.get("Content-Length") is None and headers.get("Content-Type") is not None)
+        ):
+            return http.HTTPStatus.BAD_REQUEST, [], b"Request body not permitted for WebSocket"
+
         websockets.legacy.handshake.check_request(headers)
 
         subprotocols = []

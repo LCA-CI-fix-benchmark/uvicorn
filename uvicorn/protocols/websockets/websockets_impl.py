@@ -308,6 +308,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     self.scope["client"],
                     get_path_with_query_string(self.scope),
                 )
+                # Check if the close message includes a body
+                # If so, we may need to handle it differently to avoid the exception
                 self.initial_response = (http.HTTPStatus.FORBIDDEN, [], b"")
                 self.handshake_started_event.set()
                 self.closed_event.set()
@@ -398,6 +400,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
         if self.lost_connection_before_handshake:
             # If the handshake failed or the app closed before handshake completion,
             # use 1006 Abnormal Closure.
+            # We should also check if there was a body in the initial rejection 
+            # message and handle it gracefully
             return {"type": "websocket.disconnect", "code": 1006}
 
         if self.closed_event.is_set():

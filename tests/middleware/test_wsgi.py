@@ -3,7 +3,6 @@ import sys
 from typing import AsyncGenerator, Callable, List
 
 import a2wsgi
-import httpx
 import pytest
 
 from uvicorn._types import Environ, HTTPRequestEvent, HTTPScope, StartResponse
@@ -51,7 +50,7 @@ def return_exc_info(environ: Environ, start_response: StartResponse) -> List[byt
 
 
 @pytest.fixture(params=[wsgi._WSGIMiddleware, a2wsgi.WSGIMiddleware])
-def wsgi_middleware(request: pytest.FixtureRequest) -> Callable:
+def wsgi_middleware(request: pytest.FixtureRequest) -> wsgi._WSGIMiddleware:
     return request.param
 
 

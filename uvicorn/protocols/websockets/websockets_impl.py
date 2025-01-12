@@ -169,7 +169,12 @@ class WebSocketProtocol(WebSocketServerProtocol):
         This hook is called to determine if the websocket should return
         an HTTP response and close.
 
-        Our behavior here is to start the ASGI application, and then wait
+        According to the ASGI spec, if the ASGI application wants to reject
+        the connection, it should either return a HTTP response on 
+        websocket.connect or raise a WebSocketClose exception. 
+        If the application does neither, the connection is accepted.
+
+        Our behavior here is to start the ASGI application task, and then wait
         for either `accept` or `close` in order to determine if we should
         close the connection.
         """
@@ -253,6 +258,12 @@ class WebSocketProtocol(WebSocketServerProtocol):
         """
         try:
             result = await self.app(self.scope, self.asgi_receive, self.asgi_send)
+        except websockets.exceptions.WebSocketClose as exc:
+            self.closed_event.set()
+            if not self.handshake_started_event.is_set():
+                self.initial_response = (http.HTTPStatus.FORBIDDEN, [], b"")
+                self.handshake_started_event.set()
+            self.transport.close()                     
         except Disconnected:
             self.closed_event.set()
             self.transport.close()

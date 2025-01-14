@@ -366,7 +366,17 @@ class WebSocketProtocol(WebSocketServerProtocol):
         elif self.initial_response is not None:
             if message_type == "websocket.http.response.body":
                 message = cast("WebSocketResponseBodyEvent", message)
-                body = self.initial_response[2] + message["body"]
+                # Handle case where initial response body is None
+                current_body = self.initial_response[2] if self.initial_response[2] else b""
+                body = current_body + message["body"]
+                
+                # If no content-length is set and this is the final chunk, add it
+                if not message.get("more_body", False):
+                    headers = list(self.initial_response[1])
+                    has_content_length = any(k.lower() == "content-length" for k, v in headers)
+                    if not has_content_length:
+                        headers.append(("content-length", str(len(body))))
+                        self.initial_response = (self.initial_response[0], headers, body)
                 self.initial_response = self.initial_response[:2] + (body,)
                 if not message.get("more_body", False):
                     self.closed_event.set()

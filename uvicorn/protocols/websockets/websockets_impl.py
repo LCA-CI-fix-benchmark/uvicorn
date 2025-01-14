@@ -218,6 +218,10 @@ class WebSocketProtocol(WebSocketServerProtocol):
         We override the standard 'process_subprotocol' behavior here so that
         we return whatever subprotocol is sent in the 'accept' message.
         """
+        if self.accepted_subprotocol is None:
+            self.accepted_subprotocol = super().process_subprotocol(
+                headers, available_subprotocols
+            )
         return self.accepted_subprotocol
 
     def send_500_response(self) -> None:
@@ -320,6 +324,9 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     get_path_with_query_string(self.scope),
                     message["status"],
                 )
+                if message["status"] >= 400:
+                    self.close_expected = True
+
                 # websockets requires the status to be an enum. look it up.
                 status = http.HTTPStatus(message["status"])
                 headers = [
@@ -345,6 +352,10 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     bytes_data = message.get("bytes")
                     text_data = message.get("text")
                     data = text_data if bytes_data is None else bytes_data
+                    if self.close_expected:
+                        raise RuntimeError(
+                            "Unexpected 'websocket.send' message after sending a non-200 response."
+                        )
                     await self.send(data)  # type: ignore[arg-type]
 
                 elif message_type == "websocket.close":

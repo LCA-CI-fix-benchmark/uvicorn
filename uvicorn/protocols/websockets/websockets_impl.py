@@ -175,6 +175,14 @@ class WebSocketProtocol(WebSocketServerProtocol):
         """
         path_portion, _, query_string = path.partition("?")
 
+        # Reject WebSocket connections with body but no Content-Length
+        if (
+            "Content-Length" not in headers
+            and headers.get("Transfer-Encoding", "") != ""
+        ):
+            return (http.HTTPStatus.BAD_REQUEST, [], b"Request body without Content-Length")
+
+        # Proceed with normal WebSocket handshake validation
         websockets.legacy.handshake.check_request(headers)
 
         subprotocols = []

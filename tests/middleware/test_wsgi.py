@@ -1,6 +1,6 @@
 import io
 import sys
-from typing import AsyncGenerator, Callable, List
+from typing import AsyncGenerator, Callable, List, Type, Union
 
 import a2wsgi
 import httpx
@@ -51,8 +51,8 @@ def return_exc_info(environ: Environ, start_response: StartResponse) -> List[byt
 
 
 @pytest.fixture(params=[wsgi._WSGIMiddleware, a2wsgi.WSGIMiddleware])
-def wsgi_middleware(request: pytest.FixtureRequest) -> Callable:
-    return request.param
+def wsgi_middleware(request: pytest.FixtureRequest) -> Type[Union[wsgi._WSGIMiddleware, a2wsgi.WSGIMiddleware]]:
+    return request.param  # type: ignore[return-value]
 
 
 @pytest.mark.anyio

@@ -38,8 +38,8 @@ def raise_exception(environ: Environ, start_response: StartResponse) -> List[byt
 
 def return_exc_info(environ: Environ, start_response: StartResponse) -> List[bytes]:
     try:
-        raise RuntimeError("Something went wrong")
     except RuntimeError:
+        raise
         status = "500 Internal Server Error"
         output = b"Internal Server Error"
         headers = [

@@ -17,8 +17,12 @@ def hello_world(environ: Environ, start_response: StartResponse) -> List[bytes]:
         ("Content-Type", "text/plain; charset=utf-8"),
         ("Content-Length", str(len(output))),
     ]
-    start_response(status, headers, None)
-    return [output]
+    if hasattr(environ, 'input') and environ['input'].read():
+    output = environ['input'].read()
+else:
+    output = b""
+start_response(status, headers, None)
+    return [output, b""]
 
 
 def echo_body(environ: Environ, start_response: StartResponse) -> List[bytes]:

@@ -175,6 +175,20 @@ class WebSocketProtocol(WebSocketServerProtocol):
         """
         path_portion, _, query_string = path.partition("?")
 
+        # Reject websocket upgrades with body but no Content-Length
+        if (
+            headers.get("Transfer-Encoding") or
+            (
+                "Content-Length" not in headers and
+                any(h in headers for h in ("Content-Type", "Content-Encoding"))
+            )
+        ):
+            return (
+                http.HTTPStatus.BAD_REQUEST,
+                [],
+                b"Request body not permitted for WebSocket upgrade"
+            )
+
         websockets.legacy.handshake.check_request(headers)
 
         subprotocols = []

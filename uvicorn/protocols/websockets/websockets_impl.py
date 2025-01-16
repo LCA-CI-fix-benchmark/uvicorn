@@ -308,7 +308,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     self.scope["client"],
                     get_path_with_query_string(self.scope),
                 )
-                self.initial_response = (http.HTTPStatus.FORBIDDEN, [], b"")
+                self.initial_response = (http.HTTPStatus.FORBIDDEN, [], b"Forbidden")
                 self.handshake_started_event.set()
                 self.closed_event.set()
 
@@ -325,7 +325,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
                 headers = [
                     (name.decode("latin-1"), value.decode("latin-1"))
                     for name, value in message.get("headers", [])
-                ]
+                ] + [("content-length", "0")]  # Ensure content-length is set
+
                 self.initial_response = (status, headers, b"")
                 self.handshake_started_event.set()
 
@@ -366,10 +367,17 @@ class WebSocketProtocol(WebSocketServerProtocol):
         elif self.initial_response is not None:
             if message_type == "websocket.http.response.body":
                 message = cast("WebSocketResponseBodyEvent", message)
-                body = self.initial_response[2] + message["body"]
-                self.initial_response = self.initial_response[:2] + (body,)
-                if not message.get("more_body", False):
-                    self.closed_event.set()
+                status, headers, existing_body = self.initial_response
+                body = existing_body + message["body"]
+                
+                # Update content-length if body is present
+                if body:
+                    headers = [h for h in headers if h[0].lower() != "content-length"]
+                    headers.append(("content-length", str(len(body))))
+                
+                self.initial_response = (status, headers, body)
+                if not message.get("more_body", False):    
+                    self.closed_event.set() 
             else:
                 msg = (
                     "Expected ASGI message 'websocket.http.response.body' "

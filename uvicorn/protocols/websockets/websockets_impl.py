@@ -125,7 +125,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
         self, transport: asyncio.Transport
     ) -> None:
         self.connections.add(self)
-        self.transport = transport
+        if transport is not None:
+            self.transport = transport
         self.server = get_local_addr(transport)
         self.client = get_remote_addr(transport)
         self.scheme = "wss" if is_ssl(transport) else "ws"

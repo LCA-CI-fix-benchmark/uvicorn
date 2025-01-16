@@ -223,11 +223,14 @@ class WebSocketProtocol(WebSocketServerProtocol):
     def send_500_response(self) -> None:
         msg = b"Internal Server Error"
         content = [
-            b"HTTP/1.1 500 Internal Server Error\r\n"
-            b"content-type: text/plain; charset=utf-8\r\n",
-            b"content-length: " + str(len(msg)).encode("ascii") + b"\r\n",
-            b"connection: close\r\n",
-            b"\r\n",
+            b"HTTP/1.1 500 Internal Server Error\r\n" +
+            b"content-type: text/plain; charset=utf-8\r\n" +
+            b"content-length: " + str(len(msg)).encode("ascii") + b"\r\n" +
+            b"connection: close\r\n" +
+            b"\r\n"
+        ]
+        self.transport.write(b"".join(content))
+        content = [
             msg,
         ]
         self.transport.write(b"".join(content))
@@ -304,7 +307,14 @@ class WebSocketProtocol(WebSocketServerProtocol):
             elif message_type == "websocket.close":
                 message = cast("WebSocketCloseEvent", message)
                 self.logger.info(
-                    '%s - "WebSocket %s" 403',
+                    '%s - "WebSocket %s" 403', 
+                    self.scope["client"],
+                    get_path_with_query_string(self.scope),
+                )
+                status_code = message.get("status", 403)
+                body = message.get("body", b"")
+                self.logger.info(
+                    '%s - "WebSocket %s" %d',
                     self.scope["client"],
                     get_path_with_query_string(self.scope),
                 )
@@ -366,7 +376,14 @@ class WebSocketProtocol(WebSocketServerProtocol):
         elif self.initial_response is not None:
             if message_type == "websocket.http.response.body":
                 message = cast("WebSocketResponseBodyEvent", message)
-                body = self.initial_response[2] + message["body"]
+                current_body = self.initial_response[2]
+                new_body = message["body"]
+                if current_body:
+                    body = current_body + new_body
+                else:
+                    body = new_body
+                if not any(h[0].lower() == "content-length" for h in self.initial_response[1]):
+                    self.transport.set_write_buffer_limits(high=len(body))
                 self.initial_response = self.initial_response[:2] + (body,)
                 if not message.get("more_body", False):
                     self.closed_event.set()

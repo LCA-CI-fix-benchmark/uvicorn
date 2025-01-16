@@ -46,7 +46,8 @@ def return_exc_info(environ: Environ, start_response: StartResponse) -> List[byt
             ("Content-Type", "text/plain; charset=utf-8"),
             ("Content-Length", str(len(output))),
         ]
-        start_response(status, headers, sys.exc_info())  # type: ignore[arg-type]
+        start_response(status, headers)
+        return [output, *sys.exc_info()]
         return [output]
 
 

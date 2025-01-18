@@ -218,7 +218,9 @@ class WebSocketProtocol(WebSocketServerProtocol):
         We override the standard 'process_subprotocol' behavior here so that
         we return whatever subprotocol is sent in the 'accept' message.
         """
-        return self.accepted_subprotocol
+        if available_subprotocols and self.accepted_subprotocol in available_subprotocols:
+           return self.accepted_subprotocol
+       return None
 
     def send_500_response(self) -> None:
         msg = b"Internal Server Error"

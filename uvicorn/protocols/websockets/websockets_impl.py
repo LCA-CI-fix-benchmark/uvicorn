@@ -320,13 +320,13 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     get_path_with_query_string(self.scope),
                     message["status"],
                 )
-                # websockets requires the status to be an enum. look it up.
+                # Initialize response with empty body that will be populated later
                 status = http.HTTPStatus(message["status"])
                 headers = [
                     (name.decode("latin-1"), value.decode("latin-1"))
                     for name, value in message.get("headers", [])
                 ]
-                self.initial_response = (status, headers, b"")
+                self.initial_response = [status, headers, b""]
                 self.handshake_started_event.set()
 
             else:
@@ -366,8 +366,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
         elif self.initial_response is not None:
             if message_type == "websocket.http.response.body":
                 message = cast("WebSocketResponseBodyEvent", message)
-                body = self.initial_response[2] + message["body"]
-                self.initial_response = self.initial_response[:2] + (body,)
+                body = message.get("body", b"")
+                self.initial_response[2] = self.initial_response[2] + body
                 if not message.get("more_body", False):
                     self.closed_event.set()
             else:

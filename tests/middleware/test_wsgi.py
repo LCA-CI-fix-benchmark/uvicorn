@@ -1,6 +1,6 @@
 import io
 import sys
-from typing import AsyncGenerator, Callable, List
+from typing import AsyncGenerator, Callable, List, Union
 
 import a2wsgi
 import httpx

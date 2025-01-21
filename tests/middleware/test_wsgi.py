@@ -1,6 +1,8 @@
 import io
 import sys
 from typing import AsyncGenerator, Callable, List
+from uvicorn.middleware.wsgi import _WSGIMiddleware
+from a2wsgi import WSGIMiddleware
 
 import a2wsgi
 import httpx
@@ -51,7 +53,7 @@ def return_exc_info(environ: Environ, start_response: StartResponse) -> List[byt
 
 
 @pytest.fixture(params=[wsgi._WSGIMiddleware, a2wsgi.WSGIMiddleware])
-def wsgi_middleware(request: pytest.FixtureRequest) -> Callable:
+def wsgi_middleware(request: pytest.FixtureRequest) -> Callable[..., List[bytes]]:
     return request.param
 
 

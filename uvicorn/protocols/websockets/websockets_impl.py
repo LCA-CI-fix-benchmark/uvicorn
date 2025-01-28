@@ -355,6 +355,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     self.closed_event.set()
 
                 else:
+                    self.closed_event.set()
                     msg = (
                         "Expected ASGI message 'websocket.send' or 'websocket.close',"
                         " but got '%s'."
@@ -362,6 +363,13 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     raise RuntimeError(msg % message_type)
             except ConnectionClosed as exc:
                 raise Disconnected from exc
+        else:
+            self.closed_event.set()
+            msg = (
+                "Unexpected ASGI message '%s', after sending 'websocket.close' "
+                "or response already completed."
+            )
+            raise RuntimeError(msg % message_type)
 
         elif self.initial_response is not None:
             if message_type == "websocket.http.response.body":

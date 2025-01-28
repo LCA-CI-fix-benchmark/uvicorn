@@ -268,9 +268,13 @@ class WebSocketProtocol(WebSocketServerProtocol):
         else:
             self.closed_event.set()
             if not self.handshake_started_event.is_set():
-                msg = "ASGI callable returned without sending handshake."
+                if self.initial_response is None:
+                    await self.asgi_send({"type": "websocket.close", "code": 1006})
+                    await self.handshake_completed_event.wait()
+                    self.transport.close()
+                    return
+                msg = "ASGI callable did not finish handshake."
                 self.logger.error(msg)
-                self.send_500_response()
             elif result is not None:
                 msg = "ASGI callable should return None, but returned '%s'."
                 self.logger.error(msg, result)

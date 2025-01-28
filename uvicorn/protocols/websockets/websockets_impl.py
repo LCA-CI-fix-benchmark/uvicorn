@@ -308,9 +308,19 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     self.scope["client"],
                     get_path_with_query_string(self.scope),
                 )
-                self.initial_response = (http.HTTPStatus.FORBIDDEN, [], b"")
+                response_body = b"Forbidden"
+                self.initial_response = (
+                    http.HTTPStatus.FORBIDDEN,
+                    [
+                        ("content-type", "text/plain"),
+                        ("content-length", str(len(response_body))),
+                        ("connection", "close"),
+                    ],
+                    response_body,
+                )
                 self.handshake_started_event.set()
                 self.closed_event.set()
+                return
 
             elif message_type == "websocket.http.response.start":
                 message = cast("WebSocketResponseStartEvent", message)
@@ -322,7 +332,15 @@ class WebSocketProtocol(WebSocketServerProtocol):
                 )
                 # websockets requires the status to be an enum. look it up.
                 status = http.HTTPStatus(message["status"])
-                headers = [
+                headers = []
+                has_content_length = False
+                for name, value in message.get("headers", []):
+                    if name.lower() == b"content-length":
+                        has_content_length = True
+                    headers.append((name.decode("latin-1"), value.decode("latin-1")))
+                if not has_content_length:
+                    headers.append(("content-length", "0"))
+                headers.extend([
                     (name.decode("latin-1"), value.decode("latin-1"))
                     for name, value in message.get("headers", [])
                 ]

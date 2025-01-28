@@ -148,7 +148,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
         )
         self.handshake_completed_event.set()
         super().connection_lost(exc)
-        if exc is None:
+        if exc is None and not self.transport.is_closing():
             self.transport.close()
 
     def shutdown(self) -> None:
@@ -264,7 +264,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
                 self.send_500_response()
             else:
                 await self.handshake_completed_event.wait()
-            self.transport.close()
+            if not self.transport.is_closing():
+                self.transport.close()
         else:
             self.closed_event.set()
             if not self.handshake_started_event.is_set():

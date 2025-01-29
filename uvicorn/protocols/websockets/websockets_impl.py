@@ -121,6 +121,16 @@ class WebSocketProtocol(WebSocketServerProtocol):
             for name, value in server_state.default_headers
         ]
 
+    async def read_body(self) -> bytes:
+        # Returns the request body.
+        # Note: The websockets library documentation recommends reading the body,
+        # even when it's not used, to avoid connection errors.
+        try:
+            body = await self.http_request.read_body()
+        except Exception:  # pragma: nocover # websockets issue, see #1317
+            body = b""
+        return body
+
     def connection_made(  # type: ignore[override]
         self, transport: asyncio.Transport
     ) -> None:
@@ -186,6 +196,9 @@ class WebSocketProtocol(WebSocketServerProtocol):
             for name, value in headers.raw_items()
         ]
         path = unquote(path_portion)
+
+        await self.read_body()  # Consume the request body.
+
         full_path = self.root_path + path
         full_raw_path = self.root_path.encode("ascii") + path_portion.encode("ascii")
 

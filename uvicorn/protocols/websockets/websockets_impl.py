@@ -209,6 +209,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
         task.add_done_callback(self.on_task_complete)
         self.tasks.add(task)
         await self.handshake_started_event.wait()
+        if self.initial_response is not None:
+            await self.closed_event.wait()
         return self.initial_response
 
     def process_subprotocol(

@@ -309,6 +309,17 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     get_path_with_query_string(self.scope),
                 )
                 self.initial_response = (http.HTTPStatus.FORBIDDEN, [], b"")
+
+                reason = message.get("reason", "")
+                body = reason.encode("utf-8") 
+                more_body = message.get("more_body", False)
+                if more_body:
+                    self.logger.warning(
+                        "Ignoring 'more_body' in 'websocket.close' message as a "
+                        "WebSocket close message should not have a body."
+                    )
+                self.initial_response = (http.HTTPStatus.FORBIDDEN, [], body)
+                
                 self.handshake_started_event.set()
                 self.closed_event.set()
 

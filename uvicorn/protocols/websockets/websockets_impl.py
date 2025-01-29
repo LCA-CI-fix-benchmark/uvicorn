@@ -218,6 +218,9 @@ class WebSocketProtocol(WebSocketServerProtocol):
         We override the standard 'process_subprotocol' behavior here so that
         we return whatever subprotocol is sent in the 'accept' message.
         """
+        if not self.handshake_started_event.is_set() and not self.closed_event.is_set():
+            self.scope["lost_connection"] = True
+            self.handshake_started_event.set()
         return self.accepted_subprotocol
 
     def send_500_response(self) -> None:

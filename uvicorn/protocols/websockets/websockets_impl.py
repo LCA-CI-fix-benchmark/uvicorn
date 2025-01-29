@@ -260,10 +260,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
             self.closed_event.set()
             msg = "Exception in ASGI application\n"
             self.logger.error(msg, exc_info=exc)
-            if not self.handshake_started_event.is_set():
-                self.send_500_response()
-            else:
-                await self.handshake_completed_event.wait()
+            await self._send_close_if_handshake_not_started()
             self.transport.close()
         else:
             self.closed_event.set()
@@ -274,7 +271,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
             elif result is not None:
                 msg = "ASGI callable should return None, but returned '%s'."
                 self.logger.error(msg, result)
-                await self.handshake_completed_event.wait()
+                await self._send_close_if_handshake_not_started()
             self.transport.close()
 
     async def asgi_send(self, message: "ASGISendEvent") -> None:

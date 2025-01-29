@@ -230,6 +230,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
             b"\r\n",
             msg,
         ]
+        await self.handshake_started_event.wait()
+        await asyncio.sleep(0)  # Yield to allow handler task to terminate
         self.transport.write(b"".join(content))
         # Allow handler task to terminate cleanly, as websockets doesn't cancel it by
         # itself (see https://github.com/encode/uvicorn/issues/920)

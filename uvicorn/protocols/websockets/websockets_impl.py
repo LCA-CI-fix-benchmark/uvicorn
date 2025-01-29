@@ -323,6 +323,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
                 # websockets requires the status to be an enum. look it up.
                 status = http.HTTPStatus(message["status"])
                 headers = [
+                    (b"content-length", b"0")
+                    if status != http.HTTPStatus.NO_CONTENT else
                     (name.decode("latin-1"), value.decode("latin-1"))
                     for name, value in message.get("headers", [])
                 ]

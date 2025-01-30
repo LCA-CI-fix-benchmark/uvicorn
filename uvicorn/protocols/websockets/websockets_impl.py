@@ -154,7 +154,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
     def shutdown(self) -> None:
         self.ws_server.closing = True
         if self.handshake_completed_event.is_set():
-            self.fail_connection(1012)
+            self.fail_connection(1001)
         else:
             self.send_500_response()
         self.transport.close()
@@ -408,7 +408,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
         except ConnectionClosed as exc:
             self.closed_event.set()
             if self.ws_server.closing:
-                return {"type": "websocket.disconnect", "code": 1012}
+                return {"type": "websocket.disconnect", "code": 1001}
             return {"type": "websocket.disconnect", "code": exc.code}
 
         if isinstance(data, str):

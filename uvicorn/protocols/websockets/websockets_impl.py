@@ -156,7 +156,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
         if self.handshake_completed_event.is_set():
             self.fail_connection(1012)
         else:
-            self.send_500_response()
+            self.send_service_unavailable_response()
         self.transport.close()
 
     def on_task_complete(self, task: asyncio.Task) -> None:
@@ -220,10 +220,10 @@ class WebSocketProtocol(WebSocketServerProtocol):
         """
         return self.accepted_subprotocol
 
-    def send_500_response(self) -> None:
-        msg = b"Internal Server Error"
+    def send_service_unavailable_response(self) -> None:
+        msg = b"Service Unavailable"
         content = [
-            b"HTTP/1.1 500 Internal Server Error\r\n"
+            b"HTTP/1.1 503 Service Unavailable\r\n"
             b"content-type: text/plain; charset=utf-8\r\n",
             b"content-length: " + str(len(msg)).encode("ascii") + b"\r\n",
             b"connection: close\r\n",
@@ -275,7 +275,7 @@ class WebSocketProtocol(WebSocketServerProtocol):
                 msg = "ASGI callable should return None, but returned '%s'."
                 self.logger.error(msg, result)
                 await self.handshake_completed_event.wait()
-            self.transport.close()
+        self.transport.close()
 
     async def asgi_send(self, message: "ASGISendEvent") -> None:
         message_type = message["type"]

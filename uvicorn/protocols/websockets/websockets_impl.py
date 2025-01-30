@@ -320,12 +320,26 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     get_path_with_query_string(self.scope),
                     message["status"],
                 )
-                # websockets requires the status to be an enum. look it up.
-                status = http.HTTPStatus(message["status"])
-                headers = [
+                status_code = message["status"]
+                headers = []
+                if "headers" in message:
+                    headers = [
+                        (name.decode("latin-1"), value.decode("latin-1"))
+                        for name, value in message["headers"]
+                    ]
+                    content_length_header = next(
+                        (value for name, value in headers if name.lower() == "content-length"),
+                        None,
+                    )
+                    if content_length_header is None:
+                        headers.append(("content-length", "0"))
+
+                # websockets requires the status to be an enum
+                status = http.HTTPStatus(status_code)
+                headers.extend(
                     (name.decode("latin-1"), value.decode("latin-1"))
-                    for name, value in message.get("headers", [])
-                ]
+                    for name, value in self.extra_headers
+                )
                 self.initial_response = (status, headers, b"")
                 self.handshake_started_event.set()
 

@@ -175,6 +175,13 @@ class WebSocketProtocol(WebSocketServerProtocol):
         """
         path_portion, _, query_string = path.partition("?")
 
+        has_body = any(
+            name.lower() == b"content-length" for name, _ in headers.raw_items()
+        )
+        if not has_body and headers.get("transfer-encoding") is None:
+            self.send_400_response()
+            return self.initial_response
+
         websockets.legacy.handshake.check_request(headers)
 
         subprotocols = []

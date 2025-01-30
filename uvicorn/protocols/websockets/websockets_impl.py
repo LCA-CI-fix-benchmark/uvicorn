@@ -326,6 +326,8 @@ class WebSocketProtocol(WebSocketServerProtocol):
                     (name.decode("latin-1"), value.decode("latin-1"))
                     for name, value in message.get("headers", [])
                 ]
+                if not message.get("body"):
+                    headers.append(("content-length", "0"))
                 self.initial_response = (status, headers, b"")
                 self.handshake_started_event.set()
 

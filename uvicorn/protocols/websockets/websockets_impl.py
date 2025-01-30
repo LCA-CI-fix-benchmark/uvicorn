@@ -414,3 +414,11 @@ class WebSocketProtocol(WebSocketServerProtocol):
         if isinstance(data, str):
             return {"type": "websocket.receive", "text": data}
         return {"type": "websocket.receive", "bytes": data}
+    def send_http_response(self, status: http.HTTPStatus, headers: List[Tuple[bytes, bytes]], body: bytes) -> None:
+        reason = status.phrase.encode("ascii")
+        headers = [(header[0].encode("ascii"), header[1].encode("ascii")) for header in headers]
+        response = httpcore.Response(status=status.value, headers=headers, content=body, reason=reason)
+        data = httpcore.models.RequestData(h11.Request(method="GET", target="/", headers=Headers()), True)
+        output = httpcore.SyncHTTPConnection._create_response_bytes(data, response)
+        self.transport.write(output)
+
